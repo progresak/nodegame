@@ -9,7 +9,7 @@ var server = require('http').Server(app);
 var profiler = require('v8-profiler');
 var fs = require('fs');
 
-var DEBUG = true;
+var DEBUG = false;
 var server_port = 2000;
 var server_ip_address = 'localhost';
 if( !DEBUG ) {
