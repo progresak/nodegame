@@ -1,6 +1,6 @@
 
 var mongojs = require("mongojs");
-var db = mongojs('localhost:27017/myGame', ['account', 'progress']);
+// var db = mongojs('localhost:27017/myGame', ['account', 'progress']);
 
 var express = require('express');
 var app = express();
@@ -9,11 +9,26 @@ var server = require('http').Server(app);
 var profiler = require('v8-profiler');
 var fs = require('fs');
 
+var DEBUG = true;
+var server_port = 2000;
+var server_ip_address = 'localhost';
+if( !DEBUG ) {
+    server_port = process.env.OPENSHIFT_NODEJS_PORT || 8080;
+    server_ip_address = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
+}
+
 app.get("/", function(req, res) {
     res.sendFile(__dirname + '/client/index.html');
 });
+
 app.use('/client', express.static(__dirname + '/client'));
-server.listen(2000);
+if(!DEBUG) {
+    app.listen(server_port, server_ip_address, function () {
+         console.log( "Listening on " + server_ip_address + ", server_port " + server_port );
+    });
+}else{
+    server.listen(server_port);
+}
 
 var SOCKET_LIST = {};
 
@@ -330,23 +345,25 @@ Bullet.getAllInitPack = function () {
     return bullets;
 }
 
-var DEBUG = true;
 
 var isValidPassword = function(data, cb) {
-    db.account.find(data, function(err, res) {
-        // cb((res.length > 0));
-        cb(true);
-    });
+    // db.account.find(data, function(err, res) {
+    //     // cb((res.length > 0));
+    //     cb(true);
+    // });
+    cb(true);
 }
 var isUsernameTaken = function(data, cb) {
-    db.account.find({username:data.username}, function(err, res) {
-        cb((res.length > 0));
-    });
+    // db.account.find({username:data.username}, function(err, res) {
+    //     cb((res.length > 0));
+    // });
+    cb(false);
 }
 var addUser = function(data, cb) {
-        db.account.insert(data, function(err) {
-            cb();
-        });
+        // db.account.insert(data, function(err) {
+        //     cb();
+        // });
+        cb();
 }
 
 var io = require('socket.io')(server, {});
@@ -429,4 +446,3 @@ var startProfilinig = function(duration) {
         })
     },duration);
 }
-startProfilinig(10000);

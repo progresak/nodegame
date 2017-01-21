@@ -16,18 +16,14 @@
         var gameDiv = $("#gameDiv");
         var signDiv = $("#signDiv");
         var signDivUsername = $("#signDiv-username");
-        var signDivPassword = $("#signDiv-password");
-        var signDivSignUp = $("#signDiv-up");
-        var signDivSignIn = $("#signDiv-in");
+        var signDivPassword = $("#signDiv-password").hide();
+        var signDivSignUp = $("#signDiv-up").hide();;
+        var signDivSignIn = $("#signDiv-in")
         signDivUsername.focus();
 
         var chatText = $("#chat-text");
         var chatForm = $("#chat-form");
         var chatInput = $("#chat-input");
-        socket.emit("signIn", {username:"progres", password:"a"});
-        signDivSignIn.click(function() {
-        });
-
                 // scroll to bottom
         function updateScroll(el){
           el.scrollTop = el.scrollHeight;
@@ -38,16 +34,18 @@
         }
         $('#signForm').submit(function(e){
             e.preventDefault();
-            console.log(e);
             socket.emit("signIn", {username:signDivUsername.val(), password:signDivPassword.val()});
 
-        })
+        });
+
         $("#changeMap").click(function() {
             changeMap();
-        })
+        });
+
         signDivSignUp.click(function() {
             socket.emit("signUp", {username:signDivUsername.val(), password:signDivPassword.val()});
-        })
+        });
+
         var area = $('#message-area');
         socket.on('signInResponse', function(data) {
             if(data.success) {
@@ -273,7 +271,6 @@
         }
 
         socket.on('addToChat', function(data) {
-            console.log(data);
             chatText.prepend('<p><b>[' + data.player + ']</b>: ' + data.msg+ '</p>');
         });
         socket.on('evalAnswer', function(data) {
@@ -355,15 +352,15 @@
 </head>
 <body>
     <div id="signDiv">
-        <h2>Přihlašte se</h2>
+        <h2>MMO Progres Fight</h2>
         <form id="signForm">
         <label for="signDiv-username">
             Nick:
         </label>
         <input class="form-control" id="signDiv-username"><br>
-        <label for="signDiv-password">
+        <!-- <label for="signDiv-password">
             Heslo:
-        </label>
+        </label> -->
         <input class="form-control" id="signDiv-password" type="password"><br>
         <input type="submit" class="btn btn-success" id="signDiv-in" value="Přihlásit">
         </form>
