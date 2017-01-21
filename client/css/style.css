@@ -1,0 +1,104 @@
+
+body{
+background: grey;
+}
+#text-input, #chat-text {
+
+}
+#chat-text p {
+    margin:2px;
+}
+#message-area{
+    color:red;
+    font-weight: bold;
+    display: block;
+    margin-top: 10px;
+}
+#chatdiv{
+    border-radius: 5px;
+    color:white;
+    position: absolute;
+    width: 400px;
+    max-height: 150px;
+    color: white;
+    left: 10px;
+    bottom: 50px;
+    background: rgba(0,0,0,0.4);
+    border: 20px;
+    padding: 10px;
+}
+#chat-text{
+}
+.chat-window{
+  display:flex;
+  flex-direction:column;
+  height:100%;
+}
+.chat-messages{
+  flex: 1;
+  height:100%;
+  overflow: auto;
+  display: flex;
+  flex-direction: column-reverse;
+}
+#chatdiv p {
+
+}
+#chatdiv p b{
+    color:yellow;
+}
+#chat-form{
+    width: 80%;
+    position: absolute;
+    left:10px;
+    margin-bottom: 10px;
+    position: absolute;
+    width: 400px;
+    bottom:10px;
+    background: black;
+    display: none;
+}
+#chat-form label {
+    color: white;
+    float: left;
+    margin: 5px;
+}
+#chat-input{
+    background: black;
+    width: 80%;
+    border: none!important;
+    color:white;
+    padding: 5px;
+    border: 1px solid grey;
+    border-radius: 5px;
+    float: left;
+}
+#chat-text{
+overflow-y: overlay;
+    height: 100px
+
+}
+#gameDiv{
+    display: none;
+}
+#ctx,.leftni {
+    float: left;
+}
+#signDiv{
+    width: 400px;
+    min-height: 200px;
+    position: absolute;
+    left:50%;
+    top:50%;
+    margin-left: -200px;
+    margin-top: -150px;
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 10px 20px;
+    background: #333;
+    color:#eee;
+}
+.leftni{
+    margni-left:30px;
+    width: 300px;
+}
