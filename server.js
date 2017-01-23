@@ -1,37 +1,29 @@
 
-var mongojs = require("mongojs");
+// var mongojs = require("mongojs");
 // var db = mongojs('localhost:27017/myGame', ['account', 'progress']);
 
 var express = require('express');
 var app = express();
 var server = require('http').Server(app);
 
-var profiler = require('v8-profiler');
+// var profiler = require('v8-profiler');
 var fs = require('fs');
-
-var DEBUG = false;
-var server_port = 2000;
-var server_ip_address = 'localhost';
-if( !DEBUG ) {
-    server_port = process.env.OPENSHIFT_NODEJS_PORT || 8080;
-    server_ip_address = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
-}
 
 app.get("/", function(req, res) {
     res.sendFile(__dirname + '/client/index.html');
 });
 
 app.use('/client', express.static(__dirname + '/client'));
-if(!DEBUG) {
-    app.listen(server_port, server_ip_address, function () {
-         console.log( "Listening on " + server_ip_address + ", server_port " + server_port );
-    });
-}else{
-    server.listen(server_port);
-}
+
+var port = process.env.OPENSHIFT_NODEJS_PORT || 8080;
+var ip = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
+
+server.listen(port, ip, function () {
+  console.log( "Listening on " + ip + ":" + port )
+});
 
 var SOCKET_LIST = {};
-
+var DEBUG = false;
 var canvasWidth = 500;
 var canvasHeight = 500;
 
@@ -98,7 +90,7 @@ var Player = function(param) {
         }
 
         if(self.pressingNova) {
-            for(i = 0; i < 360; i += 18){
+            for(i = 0; i < 360; i += 180){
                 self.shootBullet(self.mouseAngle + i);
             }
         }
@@ -107,11 +99,10 @@ var Player = function(param) {
     self.shootBullet = function(angle) {
         Bullet({
             parent:self.id,
-             angle:angle,
-             x :self.x,
-             y : self.y,
+            angle:angle,
+            x :self.x,
+            y : self.y,
             map : self.map});
-
     }
 
     self.updateSpeed = function() {
@@ -140,7 +131,8 @@ var Player = function(param) {
             hp:self.hp,
             hpMax:self.hpMax,
             score:self.score,
-            map:self.map
+            map:self.map,
+            username: self.username,
         };
     }
 
@@ -164,15 +156,17 @@ var Player = function(param) {
 Player.list = {};
 Player.onConnect = function(socket, data) {
     var map = 'wow';
-    if(Math.random() < 0.5) {
-        map = 'field';
+    for(var i in SOCKET_LIST) {
+        SOCKET_LIST[i].emit('addToChat', {player: "Server", msg:'Hráč: [' + data.username + '] se připojil do hry'});
     }
+    logText( 'Hráč: [' + data.username + '] se připojil do hry' );
 
     var player = Player({
         id : socket.id,
         map : map,
         username : data.username
     });
+
     socket.on('keyPress', function(data){
 
         if(data.inputId === "left"){
@@ -213,6 +207,7 @@ Player.onConnect = function(socket, data) {
 
     socket.on('sendMsgToServer', function(data) {
         var p = Player.list[socket.id];
+        logText( player.username + ": " + data );
         for(var i in SOCKET_LIST) {
             SOCKET_LIST[i].emit('addToChat',{player:player.username, msg:data});
         }
@@ -225,11 +220,13 @@ Player.onConnect = function(socket, data) {
                 recipientSocket = SOCKET_LIST[i];
             }
         }
+        logText("Od " + player.username + " to " + data.username + ": " +data.message );
+
         if(recipientSocket === null) {
-            socket.emit('addToChat', 'Hráč: ' + data.username + ' není online')
+            socket.emit('addToChat', {player: "Server", msg:'Hráč: ' + data.username + ' není online'});
         }else{
-            recipientSocket.emit('addToChat', "Od " + player.username + ": " + data.message)
-            socket.emit('addToChat', "To " + player.username + ": " + data.message)
+            recipientSocket.emit('addToChat', {player: player.username, msg:data.message, before: "Od"})
+            socket.emit('addToChat', {player: data.username, msg: data.message, before: "To"})
         }
     });
 }
@@ -243,6 +240,13 @@ Player.getAllInitPack = function () {
 }
 
 Player.onDisconnect = function(socket) {
+    if(Player.list[socket.id] !== undefined) {
+        for(var i in SOCKET_LIST) {
+            SOCKET_LIST[i].emit('addToChat', {player: "Server", msg:'Hráč: [' + Player.list[socket.id].username + '] se odpojil ze hry'});
+        }
+        logText( 'Hráč: [' + Player.list[socket.id].username + '] se odpojil ze hry' );
+
+    }
     delete Player.list[socket.id];
     removePack.player.push(socket.id);
 }
@@ -299,14 +303,16 @@ var Bullet = function (param) {
             id:self.id,
             x:self.x,
             y:self.y,
-            map:self.map
+            map:self.map,
+            parent:self.parent
         };
     }
     self.getUpdatePack = function (){
         return {
             id:self.id,
             x:self.x,
-            y:self.y
+            y:self.y,
+            parent:self.parent
         };
     }
 
@@ -445,4 +451,12 @@ var startProfilinig = function(duration) {
             console.log("profile saved.");
         })
     },duration);
+}
+var logText = function(text){
+
+    fs.appendFile("logs/chat.log", '(' + new Date().toLocaleString() + '): ' + text + '\r\n', function(err) {
+       if(err) {
+           return console.log(err);
+       }
+   });
 }

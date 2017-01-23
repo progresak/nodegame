@@ -4,10 +4,15 @@
     <title>WebSocket + NodeJS + Canvas HTML5 Game</title>
     <link href="/client/css/bootstrap.min.css" rel="stylesheet">
     <link href="/client/css/style.css" rel="stylesheet">
+    <link href="http://code.jquery.com/ui/1.12.0/themes/smoothness/jquery-ui.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.2/socket.io.js"></script>
     <script
   src="https://code.jquery.com/jquery-3.1.1.min.js"
   integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+  crossorigin="anonymous"></script>
+  <script
+  src="http://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
+  integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
   crossorigin="anonymous"></script>
     <script>
     $(document).ready(function(){
@@ -23,8 +28,13 @@
 
         var chatText = $("#chat-text");
         var chatForm = $("#chat-form");
+        var chatFormLabel = $("#chat-form label");
         var chatInput = $("#chat-input");
                 // scroll to bottom
+
+        $("#chat").draggable({
+            containment: "parent"
+        });
         function updateScroll(el){
           el.scrollTop = el.scrollHeight;
         }
@@ -34,6 +44,10 @@
         }
         $('#signForm').submit(function(e){
             e.preventDefault();
+            if(!signDivUsername.val()){
+                return;
+            }
+            $('body').addClass('game');
             socket.emit("signIn", {username:signDivUsername.val(), password:signDivPassword.val()});
 
         });
@@ -67,6 +81,8 @@
         var Img = {};
         Img.player = new Image();
         Img.player.src = '/client/img/avatar.png';
+        Img.bulletEnemy = new Image();
+        Img.bulletEnemy.src = '/client/img/bulletEnemy.png';
         Img.bullet = new Image();
         Img.bullet.src = '/client/img/bullet.png';
         Img.map = {};
@@ -91,18 +107,9 @@
             $('#ui').width(w);
             $('#ui').height(h);
         }
-        var setBackgruond = function() {
-            var img = new Image();
-            img.src = "/client/img/bg.jpg";
-            var ptrn = ctx.createPattern(img, 'repeat'); // Create a pattern with this image, and set it to "repeat".
-
-            ctx.fillStyle = ptrn;
-            ctx.fillRect(0, 0, WIDTH, HEIGHT); // context.fillRect(x, y, width, height);
-        }
         var w = $( window ).width();
         var h = $( window ).height();
         setDimension(w,h);
-        setBackgruond();
 
         $( window ).resize(function() {
              var w = $(this).width();
@@ -121,6 +128,7 @@
             self.hpMax = initPack.hpMax;
             self.score = initPack.score;
             self.map = initPack.map;
+            self.username = initPack.username;
 
             self.draw = function() {
                 if(Player.list[selfId].map !== self.map){
@@ -129,12 +137,21 @@
                 var x = self.x - Player.list[selfId].x  + WIDTH / 2;
                 var y = self.y - Player.list[selfId].y  + HEIGHT / 2;
 
-                var hpWidth = 30 * self.hp / self.hpMax;
-                ctxUi.font = '20px Arial';
+                var hpWidth = 70 * self.hp / self.hpMax;
 
+                ctxUi.fillStyle = 'white';
+                ctxUi.font = '16px Arial';
+
+                ctx.textAlign="center";
+                ctxUi.textAlign="center";
+                ctxUi.fillText(self.username, x, y - 45);
+
+                drawBorder(ctx, x - hpWidth / 2, y - 38, hpWidth, 11);
                 ctx.fillStyle = 'red';
-                ctxUi.fillText(self.hp, x - 7, y - 38)
-                ctx.fillRect(x - hpWidth / 2, y - 33, hpWidth, 4);
+                ctxUi.fillStyle = 'black';
+                ctxUi.font = '12px Arial';
+                ctxUi.fillText(self.hp, x, y - 28)
+                ctx.fillRect(x - hpWidth / 2, y - 38, hpWidth, 11);
 
                 var height = Img.player.width;
                 var width = Img.player.height;
@@ -149,13 +166,23 @@
         }
         Player.list = {};
 
-
+    function drawBorder(canvas, xPos, yPos, width, height, thickness = 1)
+    {
+      canvas.fillStyle='#000';
+      canvas.fillRect(xPos - (thickness), yPos - (thickness), width + (thickness * 2), height + (thickness * 2));
+    }
         var Bullet = function(initPack){
             var self = {};
             self.id = initPack.id;
             self.x = initPack.x;
             self.y = initPack.y;
             self.map = initPack.map;
+            self.parent = initPack.parent;
+            if(Player.list[selfId] !== undefined && self.parent === Player.list[selfId].id){
+                self.img = Img.bullet;
+            }else{
+                self.img = Img.bulletEnemy;
+            }
 
             self.draw = function () {
                 if(Player.list[selfId].map !== self.map){
@@ -166,8 +193,7 @@
 
                 var x = self.x - Player.list[selfId].x + WIDTH / 2;
                 var y = self.y - Player.list[selfId].y + HEIGHT / 2;
-
-                ctx.drawImage(Img.bullet, 0, 0, Img.bullet.width, Img.bullet.height,
+                ctx.drawImage(self.img, 0, 0, self.img.width, self.img.height,
                                 x - width/2, y - height/2, width, height);
 
             }
@@ -185,7 +211,6 @@
             //{ player : [{id:123,number:'1',x:0,y:0},{id:1,number:'2',x:0,y:0}], bullet: []}
             for(var i = 0 ; i < data.player.length; i++){
                 new Player(data.player[i]);
-                console.log(data.player[i].map);
             }
             for(var i = 0 ; i < data.bullet.length; i++){
                 new Bullet(data.bullet[i]);
@@ -248,7 +273,7 @@
             for(var i in Bullet.list) {
                 Bullet.list[i].draw();
             }
-        },40);
+        },1000/25);
 
         var drawMap = function() {
             var player = Player.list[selfId];
@@ -271,25 +296,48 @@
         }
 
         socket.on('addToChat', function(data) {
-            chatText.prepend('<p><b>[' + data.player + ']</b>: ' + data.msg+ '</p>');
+            var before = data.before;
+            var colored = 'colored';
+            if(before === undefined){
+                before = '';
+                colored = '';
+            }
+            chatText.prepend('<p class="'+colored+'">' + before + ' <b class="mgsplayer">[' + data.player + ']</b>: ' + data.msg+ '</p>');
         });
+
         socket.on('evalAnswer', function(data) {
             console.log(data);
         });
 
+        $(document).on('click','.mgsplayer', function() {
+            var playername = $(this).html().slice(1, -1);
+            chatForm.show();
+            chatFormLabel.html(playername);
+            chatInput.focus();
+        });
+        chatInput.keypress(function(event) {
+            var parts = chatInput.val().split(" ");
+            if(parts[0] == '/w' && parts.length == 2 && event.keyCode === 32) {
+                chatFormLabel.html(parts[1]);
+                chatInput.val("");
+            }
+        });
         chatForm.submit(function(e) {
             e.preventDefault();
-            if(chatInput.val().substr(0, 1) === "@"){
-                socket.emit("sendPmToServer", {
-                    username:chatInput.val().slice(1, chatInput.val().indexOf(',')),
-                    message:chatInput.val().slice(chatInput.val().indexOf(',') + 1, chatInput.val().length + 1)
-                });
-            }else if (chatInput.val().substr(0, 1) === "/"){
-                socket.emit("evalServer", chatInput.val().slice(1))
-            }else{
-                if(!chatInput.val())
-                    return;
+            var komu = chatFormLabel.html();
+            var parts = chatInput.val().split(" ");
+            if(!chatInput.val() || (parts[0] == '/w' && parts.length == 2)){
+                chatInput.val("");
+                return;
+            }
+            if (komu === "Všem") {
                 socket.emit("sendMsgToServer", chatInput.val());
+            }else {
+                socket.emit("sendPmToServer", {
+                    username : komu,
+                    message : chatInput.val()
+                });
+                chatFormLabel.html("Všem");
             }
             chatInput.val("");
         });
@@ -311,12 +359,19 @@
                 if (event.keyCode === 32) { //spacebar
                     socket.emit('keyPress', {inputId:"nova", state:true});
                 }
+            }else{
+                chatInput.focusout(function(){
+                    this.focus();
+                });
             }
             if (event.keyCode === 13) { //enter
-                chatForm.toggle();
-                chatInput.focus();
+                if(!signDiv.is(':visible')){
+                    chatForm.toggle();
+                    chatInput.focus();
+                }
             }
         }
+
 
         document.onkeyup = function(event) {
             if (event.keyCode === 68) { //d
@@ -361,11 +416,11 @@
         <!-- <label for="signDiv-password">
             Heslo:
         </label> -->
-        <input class="form-control" id="signDiv-password" type="password"><br>
+        <input style="display:none;" class="form-control" id="signDiv-password" type="password"><br>
         <input type="submit" class="btn btn-success" id="signDiv-in" value="Přihlásit">
         </form>
         <br>
-        <button class="btn btn-info" id="signDiv-up">Registrovat</button>
+        <button style="display:none;" class="btn btn-info" id="signDiv-up">Registrovat</button>
 
         <span class="color-info" id="message-area"></span>
     </div>
@@ -373,17 +428,19 @@
         <canvas id="ctx" style="position:absolute; top:8px;left:8px;  border:1px solid black"></canvas>
         <canvas id="ctx-ui" style="position:absolute; top:8px;left:8px; border:1px solid black"></canvas>
         <div id="ui" style="position:absolute; top:8px;left:8px;">
-            <button id="changeMap" class="btn btn-danger" style="bottom:10px;right:10px; position:absolute;">Změnit mapu</button>
-            <div id="chatdiv" class="chat-window">
-                <div id="chat-text" class="chat-messages" style="overflow:auto;">
-                    <div class="chat-messages-text" id="messages">
-                        <p>Vítejte na serveru</p>
+            <!-- <button id="changeMap" class="btn btn-danger" style="bottom:10px;right:10px; position:absolute;">Změnit mapu</button> -->
+            <div id="chat">
+                <div id="chatdiv" class="chat-window">
+                    <div id="chat-text" class="chat-messages" style="overflow:auto;">
+                        <div class="chat-messages-text" id="messages">
+                            <p>Vítejte na serveru</p>
+                        </div>
                     </div>
                 </div>
+                <form id="chat-form" autocomplete="off">
+                    <label for="chat-input">Všem</label><input type="text" id="chat-input">
+                </form>
             </div>
-            <form id="chat-form">
-                <label for="chat-input">Všem</label><input type="text" id="chat-input">
-            </form>
         </div>
     </div>
 

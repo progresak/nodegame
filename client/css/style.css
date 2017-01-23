@@ -1,9 +1,18 @@
 
 body{
-background: grey;
+background: black;
+background-image: url("../img/strom.jpg");
+background-size: cover;
+background-repeat: no-repeat;
+background-position: top center;
 }
-#text-input, #chat-text {
-
+body.game{
+    background: #333;
+    background-image: url("../img/escheresque_ste.png");
+    background-repeat: repeat;
+}
+#chatdiv p.colored,#chatdiv p.colored b{
+    color: #f442f4;
 }
 #chat-text p {
     margin:2px;
@@ -17,47 +26,30 @@ background: grey;
 #chatdiv{
     border-radius: 5px;
     color:white;
-    position: absolute;
-    width: 400px;
-    max-height: 150px;
-    color: white;
-    left: 10px;
-    bottom: 50px;
+    width: 100%;
+    max-height: 200px;
     background: rgba(0,0,0,0.4);
-    border: 20px;
     padding: 10px;
 }
-#chat-text{
-}
-.chat-window{
-  display:flex;
-  flex-direction:column;
-  height:100%;
-}
-.chat-messages{
-  flex: 1;
-  height:100%;
-  overflow: auto;
-  display: flex;
-  flex-direction: column-reverse;
-}
-#chatdiv p {
-
-}
-#chatdiv p b{
-    color:yellow;
+#chat{
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+    width: 400px;
 }
 #chat-form{
-    width: 80%;
-    position: absolute;
-    left:10px;
-    margin-bottom: 10px;
-    position: absolute;
-    width: 400px;
-    bottom:10px;
+    width: 100%;
     background: black;
+    float: left;
+    bottom: 0px;
+    border-radius: 5px;
     display: none;
+    /*margin-top: 15px;
+    position: absolute;
+    bottom: 0px;*/
+    width: 400px;
 }
+
 #chat-form label {
     color: white;
     float: left;
@@ -75,9 +67,30 @@ background: grey;
 }
 #chat-text{
 overflow-y: overlay;
-    height: 100px
-
+max-height: 200px;
+min-height: 150px;
 }
+
+
+.chat-window{
+  display:flex;
+  flex-direction:column;
+  height:100%;
+}
+.chat-messages{
+  flex: 1;
+  height:100%;
+  overflow: auto;
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+#chatdiv p b{
+    color:yellow;
+    cursor: pointer;
+}
+
+
 #gameDiv{
     display: none;
 }
