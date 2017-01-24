@@ -1,7 +1,5 @@
-
 // var mongojs = require("mongojs");
 // var db = mongojs('localhost:27017/myGame', ['account', 'progress']);
-
 var express = require('express');
 var app = express();
 var server = require('http').Server(app);
@@ -18,8 +16,8 @@ app.use('/client', express.static(__dirname + '/client'));
 var port = process.env.OPENSHIFT_NODEJS_PORT || 8080;
 var ip = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
 
-server.listen(port, ip, function () {
-  console.log( "Listening on " + ip + ":" + port )
+server.listen(port, ip, function() {
+    console.log("Listening on " + ip + ":" + port)
 });
 
 var SOCKET_LIST = {};
@@ -31,28 +29,28 @@ var Entity = function(param) {
     var self = {
         x: 250,
         y: 250,
-        speedX:0,
-        speedY:0,
+        speedX: 0,
+        speedY: 0,
         id: "",
         map: 'wow'
     };
-    if(param.x) {
+    if (param.x) {
         self.x = param.x;
     }
-    if(param.y) {
+    if (param.y) {
         self.y = param.y;
     }
-    if(param.map) {
+    if (param.map) {
         self.map = param.map;
     }
-    if(param.id) {
+    if (param.id) {
         self.id = param.id;
     }
     self.update = function() {
         self.updatePosition();
     }
 
-    self.updatePosition = function () {
+    self.updatePosition = function() {
         self.x += self.speedX;
         self.y += self.speedY;
     }
@@ -85,12 +83,12 @@ var Player = function(param) {
         self.updateSpeed();
         super_update();
 
-        if(self.pressingAttack) {
+        if (self.pressingAttack) {
             self.shootBullet(self.mouseAngle);
         }
 
-        if(self.pressingNova) {
-            for(i = 0; i < 360; i += 180){
+        if (self.pressingNova) {
+            for (i = 0; i < 360; i += 180) {
                 self.shootBullet(self.mouseAngle + i);
             }
         }
@@ -98,52 +96,53 @@ var Player = function(param) {
 
     self.shootBullet = function(angle) {
         Bullet({
-            parent:self.id,
-            angle:angle,
-            x :self.x,
-            y : self.y,
-            map : self.map});
+            parent: self.id,
+            angle: angle,
+            x: self.x,
+            y: self.y,
+            map: self.map
+        });
     }
 
     self.updateSpeed = function() {
-        if(self.pressingRight){
+        if (self.pressingRight) {
             self.speedX = self.maxSpeed
-        }else if(self.pressingLeft){
+        } else if (self.pressingLeft) {
             self.speedX = -self.maxSpeed
-        }else {
+        } else {
             self.speedX = 0;
         }
-        if(self.pressingUp){
+        if (self.pressingUp) {
             self.speedY = -self.maxSpeed
-        }else if(self.pressingDown){
+        } else if (self.pressingDown) {
             self.speedY = self.maxSpeed
-        }else {
+        } else {
             self.speedY = 0;
         }
     }
 
-    self.getInitPack = function (){
+    self.getInitPack = function() {
         return {
-            id:self.id,
-            x:self.x,
-            y:self.y,
-            number:self.number,
-            hp:self.hp,
-            hpMax:self.hpMax,
-            score:self.score,
-            map:self.map,
+            id: self.id,
+            x: self.x,
+            y: self.y,
+            number: self.number,
+            hp: self.hp,
+            hpMax: self.hpMax,
+            score: self.score,
+            map: self.map,
             username: self.username,
         };
     }
 
-    self.getUpdatePack = function (){
+    self.getUpdatePack = function() {
         return {
-            id:self.id,
-            x:self.x,
-            y:self.y,
-            number:self.number,
-            hp:self.hp,
-            score:self.score,
+            id: self.id,
+            x: self.x,
+            y: self.y,
+            number: self.number,
+            hp: self.hp,
+            score: self.score,
             map: self.map
         };
     }
@@ -156,95 +155,115 @@ var Player = function(param) {
 Player.list = {};
 Player.onConnect = function(socket, data) {
     var map = 'wow';
-    for(var i in SOCKET_LIST) {
-        SOCKET_LIST[i].emit('addToChat', {player: "Server", msg:'Hráč: [' + data.username + '] se připojil do hry'});
+    for (var i in SOCKET_LIST) {
+        SOCKET_LIST[i].emit('addToChat', {
+            player: "Server",
+            msg: 'Hráč: [' + data.username + '] se připojil do hry'
+        });
     }
-    logText( 'Hráč: [' + data.username + '] se připojil do hry' );
+    logText('Hráč: [' + data.username + '] se připojil do hry');
 
     var player = Player({
-        id : socket.id,
-        map : map,
-        username : data.username
+        id: socket.id,
+        map: map,
+        username: data.username
     });
 
-    socket.on('keyPress', function(data){
+    socket.on('keyPress', function(data) {
 
-        if(data.inputId === "left"){
+        if (data.inputId === "left") {
             player.pressingLeft = data.state;
         }
-        if(data.inputId === "right"){
+        if (data.inputId === "right") {
             player.pressingRight = data.state;
         }
-        if(data.inputId === "up"){
+        if (data.inputId === "up") {
             player.pressingUp = data.state;
         }
-        if(data.inputId === "down"){
+        if (data.inputId === "down") {
             player.pressingDown = data.state;
         }
-        if(data.inputId === "attack"){
+        if (data.inputId === "attack") {
             player.pressingAttack = data.state;
         }
-        if(data.inputId === "nova"){
+        if (data.inputId === "nova") {
             player.pressingNova = data.state;
         }
-        if(data.inputId === "mouseAngle"){
+        if (data.inputId === "mouseAngle") {
             player.mouseAngle = data.state;
         }
     });
-    socket.on('changeMap', function(data){
-        if(player.map === 'wow'){
+    socket.on('changeMap', function(data) {
+        if (player.map === 'wow') {
             player.map = 'field';
-        }else{
+        } else {
             player.map = 'wow';
         }
     });
 
     socket.emit('init', {
         selfId: socket.id,
-        player:Player.getAllInitPack(),
-        bullet:Bullet.getAllInitPack()
+        player: Player.getAllInitPack(),
+        bullet: Bullet.getAllInitPack()
     });
 
     socket.on('sendMsgToServer', function(data) {
         var p = Player.list[socket.id];
-        logText( player.username + ": " + data );
-        for(var i in SOCKET_LIST) {
-            SOCKET_LIST[i].emit('addToChat',{player:player.username, msg:data});
+        logText(player.username + ": " + data);
+        for (var i in SOCKET_LIST) {
+            SOCKET_LIST[i].emit('addToChat', {
+                player: player.username,
+                msg: data
+            });
         }
     });
 
     socket.on('sendPmToServer', function(data) {
         var recipientSocket = null;
-        for(var i in Player.list){
-            if(Player.list[i].username === data.username){
+        for (var i in Player.list) {
+            if (Player.list[i].username === data.username) {
                 recipientSocket = SOCKET_LIST[i];
             }
         }
-        logText("Od " + player.username + " to " + data.username + ": " +data.message );
+        logText("Od " + player.username + " to " + data.username + ": " + data.message);
 
-        if(recipientSocket === null) {
-            socket.emit('addToChat', {player: "Server", msg:'Hráč: ' + data.username + ' není online'});
-        }else{
-            recipientSocket.emit('addToChat', {player: player.username, msg:data.message, before: "Od"})
-            socket.emit('addToChat', {player: data.username, msg: data.message, before: "To"})
+        if (recipientSocket === null) {
+            socket.emit('addToChat', {
+                player: "Server",
+                msg: 'Hráč: ' + data.username + ' není online'
+            });
+        } else {
+            recipientSocket.emit('addToChat', {
+                player: player.username,
+                msg: data.message,
+                before: "Od"
+            })
+            socket.emit('addToChat', {
+                player: data.username,
+                msg: data.message,
+                before: "To"
+            })
         }
     });
 }
 
-Player.getAllInitPack = function () {
+Player.getAllInitPack = function() {
     var players = [];
-    for(var i in Player.list){
+    for (var i in Player.list) {
         players.push(Player.list[i].getInitPack());
     }
     return players;
 }
 
 Player.onDisconnect = function(socket) {
-    if(Player.list[socket.id] !== undefined) {
-        for(var i in SOCKET_LIST) {
-            SOCKET_LIST[i].emit('addToChat', {player: "Server", msg:'Hráč: [' + Player.list[socket.id].username + '] se odpojil ze hry'});
+    if (Player.list[socket.id] !== undefined) {
+        for (var i in SOCKET_LIST) {
+            SOCKET_LIST[i].emit('addToChat', {
+                player: "Server",
+                msg: 'Hráč: [' + Player.list[socket.id].username + '] se odpojil ze hry'
+            });
         }
-        logText( 'Hráč: [' + Player.list[socket.id].username + '] se odpojil ze hry' );
+        logText('Hráč: [' + Player.list[socket.id].username + '] se odpojil ze hry');
 
     }
     delete Player.list[socket.id];
@@ -253,7 +272,7 @@ Player.onDisconnect = function(socket) {
 
 Player.update = function() {
     var pack = [];
-    for(var i in Player.list) {
+    for (var i in Player.list) {
         var player = Player.list[i];
         player.update();
         pack.push(player.getUpdatePack());
@@ -262,12 +281,12 @@ Player.update = function() {
 }
 
 
-var Bullet = function (param) {
+var Bullet = function(param) {
     var self = Entity(param);
     self.id = Math.random();
     self.angle = param.angle;
-    self.speedX = Math.cos(param.angle/180 * Math.PI) * 16;
-    self.speedY = Math.sin(param.angle/180 * Math.PI) * 16;
+    self.speedX = Math.cos(param.angle / 180 * Math.PI) * 16;
+    self.speedY = Math.sin(param.angle / 180 * Math.PI) * 16;
     self.parent = param.parent
     self.timer = 0;
     self.maxSpeed = 100;
@@ -279,14 +298,14 @@ var Bullet = function (param) {
         }
         super_update();
 
-        for(var i in Player.list) {
+        for (var i in Player.list)  {
             var p = Player.list[i];
-            if(self.map === p.map && self.getDistance(p) < 32 && self.parent !== p.id) {
+            if (self.map === p.map && self.getDistance(p) < 32 && self.parent !== p.id) {
                 p.hp -= 1;
 
-                if(p.hp <= 0) {
+                if (p.hp <= 0)  {
                     var shooter = Player.list[self.parent];
-                    if (shooter) {
+                    if (shooter)  {
                         shooter.score += 1;
                     }
                     p.hp = p.hpMax;
@@ -298,21 +317,21 @@ var Bullet = function (param) {
         }
     }
 
-    self.getInitPack = function (){
+    self.getInitPack = function() {
         return {
-            id:self.id,
-            x:self.x,
-            y:self.y,
-            map:self.map,
-            parent:self.parent
+            id: self.id,
+            x: self.x,
+            y: self.y,
+            map: self.map,
+            parent: self.parent
         };
     }
-    self.getUpdatePack = function (){
+    self.getUpdatePack = function() {
         return {
-            id:self.id,
-            x:self.x,
-            y:self.y,
-            parent:self.parent
+            id: self.id,
+            x: self.x,
+            y: self.y,
+            parent: self.parent
         };
     }
 
@@ -328,13 +347,13 @@ Bullet.list = {};
 Bullet.update = function() {
 
     var pack = [];
-    for(var i in Bullet.list) {
+    for (var i in Bullet.list) {
         var bullet = Bullet.list[i];
         bullet.update();
-        if(bullet.toRemove){
+        if (bullet.toRemove) {
             delete Bullet.list[i];
             removePack.bullet.push(bullet.id);
-        }else{
+        } else {
             pack.push(bullet.getUpdatePack());
         }
     }
@@ -343,9 +362,9 @@ Bullet.update = function() {
 }
 
 
-Bullet.getAllInitPack = function () {
+Bullet.getAllInitPack = function() {
     var bullets = [];
-    for(var i in Bullet.list){
+    for (var i in Bullet.list) {
         bullets.push(Bullet.list[i].getInitPack());
     }
     return bullets;
@@ -366,52 +385,60 @@ var isUsernameTaken = function(data, cb) {
     cb(false);
 }
 var addUser = function(data, cb) {
-        // db.account.insert(data, function(err) {
-        //     cb();
-        // });
-        cb();
+    // db.account.insert(data, function(err) {
+    //     cb();
+    // });
+    cb();
 }
 
 var io = require('socket.io')(server, {});
-io.sockets.on('connection', function(socket){
+io.sockets.on('connection', function(socket) {
     socket.id = Math.random();
     SOCKET_LIST[socket.id] = socket;
 
-    socket.on('signIn', function(data){
-        isValidPassword(data, function(res) {
-            if(res) {
+    socket.on('signIn', function(data) {
+        isValidPassword(data, function(res)  {
+            if (res) {
                 Player.onConnect(socket, data);
-                socket.emit('signInResponse', {success:true});
-            }else{
-                socket.emit('signInResponse', {success:false});
+                socket.emit('signInResponse', {
+                    success: true
+                });
+            } else {
+                socket.emit('signInResponse', {
+                    success: false
+                });
             }
         });
     });
 
-    socket.on('signUp', function(data){
-        isUsernameTaken(data, function(res){
-            if(!res) {
-                addUser(data,function(){
-                    socket.emit('signUpResponse', {success:true});
+    socket.on('signUp', function(data) {
+        isUsernameTaken(data, function(res) {
+            if (!res) {
+                addUser(data, function() {
+                    socket.emit('signUpResponse', {
+                        success: true
+                    });
                 });
-            }else{
-                socket.emit('signUpResponse', {success:false});
+            } else {
+                socket.emit('signUpResponse', {
+                    success: false
+                });
             }
         })
 
     });
 
-    socket.on('disconnect', function(){
+    socket.on('disconnect', function() {
         delete SOCKET_LIST[socket.id];
         Player.onDisconnect(socket);
     });
-    socket.on('setCanvas', function(data){
+    socket.on('setCanvas', function(data) {
         canvasWidth = data.width;
         canvasHeight = data.height;
     });
 
     socket.on('evalServer', function(data) {
-        if(!DEBUG) {
+        if (!DEBUG) {
             return;
         }
         var res = eval(data);
@@ -420,16 +447,22 @@ io.sockets.on('connection', function(socket){
 });
 
 
-var initPack = {player:[], bullet:[]};
-var removePack = {player:[], bullet:[]};
+var initPack = {
+    player: [],
+    bullet: []
+};
+var removePack = {
+    player: [],
+    bullet: []
+};
 
-setInterval(function(){
+setInterval(function() {
     var pack = {
         player: Player.update(),
         bullet: Bullet.update()
     }
 
-    for(var i in SOCKET_LIST) {
+    for (var i in SOCKET_LIST) {
         var socket = SOCKET_LIST[i];
         socket.emit('init', initPack);
         socket.emit('update', pack);
@@ -439,24 +472,24 @@ setInterval(function(){
     initPack.bullet = [];
     removePack.player = [];
     removePack.bullet = [];
-}, 1000/25);
+}, 1000 / 25);
 
 var startProfilinig = function(duration) {
     profiler.startProfiling('1', true);
-    setTimeout(function(){
+    setTimeout(function() {
         var profile1 = profiler.stopProfiling('1');
         profile1.export(function(error, result) {
             fs.writeFile('./profile.cpuprofile', result);
             profile1.delete();
             console.log("profile saved.");
         })
-    },duration);
+    }, duration);
 }
-var logText = function(text){
+var logText = function(text) {
 
     fs.appendFile("logs/chat.log", '(' + new Date().toLocaleString() + '): ' + text + '\r\n', function(err) {
-       if(err) {
-           return console.log(err);
-       }
-   });
+        if (err) {
+            return console.log(err);
+        }
+    });
 }
