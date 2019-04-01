@@ -6,17 +6,18 @@ var server = require('http').Server(app);
 
 // var profiler = require('v8-profiler');
 var fs = require('fs');
-
-app.get("/", function(req, res) {
+console.log(__dirname);
+console.log("jasnyL);");
+app.get("/", function (req, res) {
     res.sendFile(__dirname + '/client/index.html');
 });
 
 app.use('/client', express.static(__dirname + '/client'));
 
-var port = process.env.OPENSHIFT_NODEJS_PORT || 8080;
-var ip = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
+var port = 8080;
+var ip = '0.0.0.0';
 
-server.listen(port, ip, function() {
+server.listen(port, ip, function () {
     console.log("Listening on " + ip + ":" + port)
 });
 
@@ -25,7 +26,7 @@ var DEBUG = false;
 var canvasWidth = 500;
 var canvasHeight = 500;
 
-var Entity = function(param) {
+var Entity = function (param) {
     var self = {
         x: 250,
         y: 250,
@@ -46,22 +47,22 @@ var Entity = function(param) {
     if (param.id) {
         self.id = param.id;
     }
-    self.update = function() {
+    self.update = function () {
         self.updatePosition();
     }
 
-    self.updatePosition = function() {
+    self.updatePosition = function () {
         self.x += self.speedX;
         self.y += self.speedY;
     }
 
-    self.getDistance = function(pt) {
+    self.getDistance = function (pt) {
         return Math.sqrt(Math.pow(self.x - pt.x, 2) + Math.pow(self.y - pt.y, 2));
     }
     return self;
 }
 
-var Player = function(param) {
+var Player = function (param) {
     var self = Entity(param);
     self.number = "" + Math.floor(10 * Math.random());
     self.pressingRight = false;
@@ -79,7 +80,7 @@ var Player = function(param) {
     self.username = param.username;
 
     var super_update = self.update;
-    self.update = function() {
+    self.update = function () {
         self.updateSpeed();
         super_update();
 
@@ -94,7 +95,7 @@ var Player = function(param) {
         }
     }
 
-    self.shootBullet = function(angle) {
+    self.shootBullet = function (angle) {
         Bullet({
             parent: self.id,
             angle: angle,
@@ -104,7 +105,7 @@ var Player = function(param) {
         });
     }
 
-    self.updateSpeed = function() {
+    self.updateSpeed = function () {
         if (self.pressingRight) {
             self.speedX = self.maxSpeed
         } else if (self.pressingLeft) {
@@ -121,7 +122,7 @@ var Player = function(param) {
         }
     }
 
-    self.getInitPack = function() {
+    self.getInitPack = function () {
         return {
             id: self.id,
             x: self.x,
@@ -135,7 +136,7 @@ var Player = function(param) {
         };
     }
 
-    self.getUpdatePack = function() {
+    self.getUpdatePack = function () {
         return {
             id: self.id,
             x: self.x,
@@ -153,7 +154,7 @@ var Player = function(param) {
 }
 
 Player.list = {};
-Player.onConnect = function(socket, data) {
+Player.onConnect = function (socket, data) {
     var map = 'wow';
     for (var i in SOCKET_LIST) {
         SOCKET_LIST[i].emit('addToChat', {
@@ -169,7 +170,7 @@ Player.onConnect = function(socket, data) {
         username: data.username
     });
 
-    socket.on('keyPress', function(data) {
+    socket.on('keyPress', function (data) {
 
         if (data.inputId === "left") {
             player.pressingLeft = data.state;
@@ -193,7 +194,7 @@ Player.onConnect = function(socket, data) {
             player.mouseAngle = data.state;
         }
     });
-    socket.on('changeMap', function(data) {
+    socket.on('changeMap', function (data) {
         if (player.map === 'wow') {
             player.map = 'field';
         } else {
@@ -207,7 +208,7 @@ Player.onConnect = function(socket, data) {
         bullet: Bullet.getAllInitPack()
     });
 
-    socket.on('sendMsgToServer', function(data) {
+    socket.on('sendMsgToServer', function (data) {
         var p = Player.list[socket.id];
         logText(player.username + ": " + data);
         for (var i in SOCKET_LIST) {
@@ -218,7 +219,7 @@ Player.onConnect = function(socket, data) {
         }
     });
 
-    socket.on('sendPmToServer', function(data) {
+    socket.on('sendPmToServer', function (data) {
         var recipientSocket = null;
         for (var i in Player.list) {
             if (Player.list[i].username === data.username) {
@@ -247,7 +248,7 @@ Player.onConnect = function(socket, data) {
     });
 }
 
-Player.getAllInitPack = function() {
+Player.getAllInitPack = function () {
     var players = [];
     for (var i in Player.list) {
         players.push(Player.list[i].getInitPack());
@@ -255,7 +256,7 @@ Player.getAllInitPack = function() {
     return players;
 }
 
-Player.onDisconnect = function(socket) {
+Player.onDisconnect = function (socket) {
     if (Player.list[socket.id] !== undefined) {
         for (var i in SOCKET_LIST) {
             SOCKET_LIST[i].emit('addToChat', {
@@ -270,7 +271,7 @@ Player.onDisconnect = function(socket) {
     removePack.player.push(socket.id);
 }
 
-Player.update = function() {
+Player.update = function () {
     var pack = [];
     for (var i in Player.list) {
         var player = Player.list[i];
@@ -281,7 +282,7 @@ Player.update = function() {
 }
 
 
-var Bullet = function(param) {
+var Bullet = function (param) {
     var self = Entity(param);
     self.id = Math.random();
     self.angle = param.angle;
@@ -292,20 +293,20 @@ var Bullet = function(param) {
     self.maxSpeed = 100;
     self.toRemove = false;
     var super_update = self.update;
-    self.update = function() {
+    self.update = function () {
         if (self.timer++ > 30) {
             self.toRemove = true;
         }
         super_update();
 
-        for (var i in Player.list)  {
+        for (var i in Player.list) {
             var p = Player.list[i];
             if (self.map === p.map && self.getDistance(p) < 32 && self.parent !== p.id) {
                 p.hp -= 1;
 
-                if (p.hp <= 0)  {
+                if (p.hp <= 0) {
                     var shooter = Player.list[self.parent];
-                    if (shooter)  {
+                    if (shooter) {
                         shooter.score += 1;
                     }
                     p.hp = p.hpMax;
@@ -317,7 +318,7 @@ var Bullet = function(param) {
         }
     }
 
-    self.getInitPack = function() {
+    self.getInitPack = function () {
         return {
             id: self.id,
             x: self.x,
@@ -326,7 +327,7 @@ var Bullet = function(param) {
             parent: self.parent
         };
     }
-    self.getUpdatePack = function() {
+    self.getUpdatePack = function () {
         return {
             id: self.id,
             x: self.x,
@@ -344,7 +345,7 @@ var Bullet = function(param) {
 Bullet.list = {};
 
 
-Bullet.update = function() {
+Bullet.update = function () {
 
     var pack = [];
     for (var i in Bullet.list) {
@@ -362,7 +363,7 @@ Bullet.update = function() {
 }
 
 
-Bullet.getAllInitPack = function() {
+Bullet.getAllInitPack = function () {
     var bullets = [];
     for (var i in Bullet.list) {
         bullets.push(Bullet.list[i].getInitPack());
@@ -371,20 +372,20 @@ Bullet.getAllInitPack = function() {
 }
 
 
-var isValidPassword = function(data, cb) {
+var isValidPassword = function (data, cb) {
     // db.account.find(data, function(err, res) {
     //     // cb((res.length > 0));
     //     cb(true);
     // });
     cb(true);
 }
-var isUsernameTaken = function(data, cb) {
+var isUsernameTaken = function (data, cb) {
     // db.account.find({username:data.username}, function(err, res) {
     //     cb((res.length > 0));
     // });
     cb(false);
 }
-var addUser = function(data, cb) {
+var addUser = function (data, cb) {
     // db.account.insert(data, function(err) {
     //     cb();
     // });
@@ -392,12 +393,12 @@ var addUser = function(data, cb) {
 }
 
 var io = require('socket.io')(server, {});
-io.sockets.on('connection', function(socket) {
+io.sockets.on('connection', function (socket) {
     socket.id = Math.random();
     SOCKET_LIST[socket.id] = socket;
 
-    socket.on('signIn', function(data) {
-        isValidPassword(data, function(res)  {
+    socket.on('signIn', function (data) {
+        isValidPassword(data, function (res) {
             if (res) {
                 Player.onConnect(socket, data);
                 socket.emit('signInResponse', {
@@ -411,10 +412,10 @@ io.sockets.on('connection', function(socket) {
         });
     });
 
-    socket.on('signUp', function(data) {
-        isUsernameTaken(data, function(res) {
+    socket.on('signUp', function (data) {
+        isUsernameTaken(data, function (res) {
             if (!res) {
-                addUser(data, function() {
+                addUser(data, function () {
                     socket.emit('signUpResponse', {
                         success: true
                     });
@@ -428,16 +429,16 @@ io.sockets.on('connection', function(socket) {
 
     });
 
-    socket.on('disconnect', function() {
+    socket.on('disconnect', function () {
         delete SOCKET_LIST[socket.id];
         Player.onDisconnect(socket);
     });
-    socket.on('setCanvas', function(data) {
+    socket.on('setCanvas', function (data) {
         canvasWidth = data.width;
         canvasHeight = data.height;
     });
 
-    socket.on('evalServer', function(data) {
+    socket.on('evalServer', function (data) {
         if (!DEBUG) {
             return;
         }
@@ -456,11 +457,11 @@ var removePack = {
     bullet: []
 };
 
-setInterval(function() {
+setInterval(function () {
     var pack = {
         player: Player.update(),
         bullet: Bullet.update()
-    }
+    };
 
     for (var i in SOCKET_LIST) {
         var socket = SOCKET_LIST[i];
@@ -474,22 +475,11 @@ setInterval(function() {
     removePack.bullet = [];
 }, 1000 / 25);
 
-var startProfilinig = function(duration) {
-    profiler.startProfiling('1', true);
-    setTimeout(function() {
-        var profile1 = profiler.stopProfiling('1');
-        profile1.export(function(error, result) {
-            fs.writeFile('./profile.cpuprofile', result);
-            profile1.delete();
-            console.log("profile saved.");
-        })
-    }, duration);
-}
-var logText = function(text) {
+var logText = function (text) {
 
-    fs.appendFile("logs/chat.log", '(' + new Date().toLocaleString() + '): ' + text + '\r\n', function(err) {
+    fs.appendFile("logs/chat.log", '(' + new Date().toLocaleString() + '): ' + text + '\r\n', function (err) {
         if (err) {
-            return console.log(err);
+            // return console.log(err);
         }
     });
-}
+};

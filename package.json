@@ -1,7 +1,11 @@
 {
-  "name": "yt_node",
+  "name": "nodegame",
   "version": "1.0.0",
-  "description": "",
+  "description": "Simply testing node.js server and HTML5 Canvas to create MMO RPG game",
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/progresak/nodegame.git"
+  },
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\"",
@@ -12,7 +16,6 @@
   "dependencies": {
     "express": "^4.14.0",
     "mongojs": "^2.4.0",
-    "socket.io": "^1.7.2",
-    "v8-profiler": "^5.6.5"
+    "socket.io": "^1.7.2"
   }
 }
