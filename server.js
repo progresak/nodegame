@@ -4,12 +4,11 @@ var express = require('express');
 var app = express();
 var server = require('http').Server(app);
 
-// var profiler = require('v8-profiler');
 var fs = require('fs');
-console.log(__dirname);
-console.log("jasnyL);");
+
 app.get("/", function (req, res) {
-    res.sendFile(__dirname + '/client/index.html');
+    res.sendFile(__dirname + '/build/index.html');
+    // res.sendFile(__dirname + '/client/index.html');
 });
 
 app.use('/client', express.static(__dirname + '/client'));
@@ -89,7 +88,7 @@ var Player = function (param) {
         }
 
         if (self.pressingNova) {
-            for (i = 0; i < 360; i += 180) {
+            for (i = 0; i < 360; i += 90) {
                 self.shootBullet(self.mouseAngle + i);
             }
         }

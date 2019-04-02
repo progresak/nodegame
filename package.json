@@ -7,15 +7,28 @@
     "url" : "https://github.com/progresak/nodegame.git"
   },
   "main": "server.js",
+  "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\"",
-    "start": "node server.js"
+    "start-server": "node server.js",
+    "start-client": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "express": "^4.14.0",
     "mongojs": "^2.4.0",
-    "socket.io": "^1.7.2"
-  }
+    "socket.io": "^1.7.2",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-scripts": "2.1.8"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
 }
