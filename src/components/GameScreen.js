@@ -1,4 +1,5 @@
 import React from 'react';
+import Chat from "./Chat";
 
 class GameScreen extends React.Component {
 
@@ -8,18 +9,7 @@ class GameScreen extends React.Component {
                 <canvas id="ctx"/>
                 <canvas id="ctx-ui"/>
                 <div id="ui">
-                    <div id="chat">
-                        <div id="chatdiv" className="chat-window">
-                            <div id="chat-text" className="chat-messages">
-                                <div className="chat-messages-text" id="messages">
-                                    <p>Vítejte na serveru</p>
-                                </div>
-                            </div>
-                        </div>
-                        <form id="chat-form" autoComplete="off">
-                            <label htmlFor="chat-input">Všem</label><input type="text" id="chat-input"/>
-                        </form>
-                    </div>
+                    <Chat />
                     <div id="position">
                         <span>[100,100]</span>
                     </div>
