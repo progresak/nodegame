@@ -14,7 +14,7 @@ app.get("/", function (req, res) {
 
 app.use('/client', express.static(__dirname + '/client'));
 
-var port = 8080;
+var port = 80;
 var ip = '0.0.0.0';
 
 server.listen(port, ip, function () {

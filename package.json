@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "Simply testing node.js server and HTML5 Canvas to create MMO RPG game",
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/progresak/nodegame.git"
+    "type": "git",
+    "url": "https://github.com/progresak/nodegame.git"
   },
   "main": "server.js",
   "scripts": {
