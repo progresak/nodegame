@@ -14,10 +14,10 @@ app.get("/", function (req, res) {
 
 app.use('/client', express.static(__dirname + '/client'));
 
-var port = 80;
+var port = process.env.PORT || 8080;
 var ip = '127.0.0.1';
 
-server.listen(port, ip, function () {
+server.listen(port, function () {
     console.log("Listening on " + ip + ":" + port)
 });
 
