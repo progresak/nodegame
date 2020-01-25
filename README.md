@@ -1,6 +1,6 @@
 # nodegame
 
-simply testing node.js server and HTML5 Canvas to create MMO RPG game
+simply testing node.js index and HTML5 Canvas to create MMO RPG game
 
 ## start the game
 

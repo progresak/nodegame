@@ -1,33 +1,29 @@
-// var mongojs = require("mongojs");
-// var db = mongojs('localhost:27017/myGame', ['account', 'progress']);
-var express = require('express');
-var app = express();
-var server = require('http').Server(app);
+const express = require('express');
+const app = express();
+const index = require('http').Server(app);
 
-// var profiler = require('v8-profiler');
-var fs = require('fs');
+const fs = require('fs');
 console.log(__dirname);
-console.log("jasnyL);");
 app.get("/", function (req, res) {
     res.sendFile(__dirname + '/client/index.html');
 });
 
 app.use('/client', express.static(__dirname + '/client'));
 
-var port = process.env.PORT || 8080;
-var ip = '127.0.0.1';
+const port = process.env.PORT || 8080;
+const ip = '127.0.0.1';
 
-server.listen(port, function () {
+index.listen(port, function () {
     console.log("Listening on " + ip + ":" + port)
 });
 
-var SOCKET_LIST = {};
-var DEBUG = false;
-var canvasWidth = 500;
-var canvasHeight = 500;
+const SOCKET_LIST = {};
+const DEBUG = false;
+const canvasWidth = 500;
+const canvasHeight = 500;
 
-var Entity = function (param) {
-    var self = {
+const Entity = function (param) {
+    const self = {
         x: 250,
         y: 250,
         speedX: 0,
@@ -62,8 +58,8 @@ var Entity = function (param) {
     return self;
 }
 
-var Player = function (param) {
-    var self = Entity(param);
+const Player = function (param) {
+    const self = Entity(param);
     self.number = "" + Math.floor(10 * Math.random());
     self.pressingRight = false;
     self.pressingLeft = false;
@@ -79,7 +75,7 @@ var Player = function (param) {
 
     self.username = param.username;
 
-    var super_update = self.update;
+    const super_update = self.update;
     self.update = function () {
         self.updateSpeed();
         super_update();
@@ -155,8 +151,8 @@ var Player = function (param) {
 
 Player.list = {};
 Player.onConnect = function (socket, data) {
-    var map = 'wow';
-    for (var i in SOCKET_LIST) {
+    const map = 'wow';
+    for (const i in SOCKET_LIST) {
         SOCKET_LIST[i].emit('addToChat', {
             player: "Server",
             msg: 'Hráč: [' + data.username + '] se připojil do hry'
@@ -164,7 +160,7 @@ Player.onConnect = function (socket, data) {
     }
     logText('Hráč: [' + data.username + '] se připojil do hry');
 
-    var player = Player({
+    const player = Player({
         id: socket.id,
         map: map,
         username: data.username
@@ -209,9 +205,9 @@ Player.onConnect = function (socket, data) {
     });
 
     socket.on('sendMsgToServer', function (data) {
-        var p = Player.list[socket.id];
+        const p = Player.list[socket.id];
         logText(player.username + ": " + data);
-        for (var i in SOCKET_LIST) {
+        for (const i in SOCKET_LIST) {
             SOCKET_LIST[i].emit('addToChat', {
                 player: player.username,
                 msg: data
@@ -220,8 +216,8 @@ Player.onConnect = function (socket, data) {
     });
 
     socket.on('sendPmToServer', function (data) {
-        var recipientSocket = null;
-        for (var i in Player.list) {
+        const recipientSocket = null;
+        for (const i in Player.list) {
             if (Player.list[i].username === data.username) {
                 recipientSocket = SOCKET_LIST[i];
             }
@@ -249,8 +245,8 @@ Player.onConnect = function (socket, data) {
 }
 
 Player.getAllInitPack = function () {
-    var players = [];
-    for (var i in Player.list) {
+    const players = [];
+    for (const i in Player.list) {
         players.push(Player.list[i].getInitPack());
     }
     return players;
@@ -258,7 +254,7 @@ Player.getAllInitPack = function () {
 
 Player.onDisconnect = function (socket) {
     if (Player.list[socket.id] !== undefined) {
-        for (var i in SOCKET_LIST) {
+        for (const i in SOCKET_LIST) {
             SOCKET_LIST[i].emit('addToChat', {
                 player: "Server",
                 msg: 'Hráč: [' + Player.list[socket.id].username + '] se odpojil ze hry'
@@ -272,9 +268,9 @@ Player.onDisconnect = function (socket) {
 }
 
 Player.update = function () {
-    var pack = [];
-    for (var i in Player.list) {
-        var player = Player.list[i];
+    const pack = [];
+    for (const i in Player.list) {
+        const player = Player.list[i];
         player.update();
         pack.push(player.getUpdatePack());
     }
@@ -282,8 +278,8 @@ Player.update = function () {
 }
 
 
-var Bullet = function (param) {
-    var self = Entity(param);
+const Bullet = function (param) {
+    const self = Entity(param);
     self.id = Math.random();
     self.angle = param.angle;
     self.speedX = Math.cos(param.angle / 180 * Math.PI) * 16;
@@ -292,20 +288,20 @@ var Bullet = function (param) {
     self.timer = 0;
     self.maxSpeed = 100;
     self.toRemove = false;
-    var super_update = self.update;
+    const super_update = self.update;
     self.update = function () {
         if (self.timer++ > 30) {
             self.toRemove = true;
         }
         super_update();
 
-        for (var i in Player.list) {
-            var p = Player.list[i];
+        for (const i in Player.list) {
+            const p = Player.list[i];
             if (self.map === p.map && self.getDistance(p) < 32 && self.parent !== p.id) {
                 p.hp -= 1;
 
                 if (p.hp <= 0) {
-                    var shooter = Player.list[self.parent];
+                    const shooter = Player.list[self.parent];
                     if (shooter) {
                         shooter.score += 1;
                     }
@@ -347,9 +343,9 @@ Bullet.list = {};
 
 Bullet.update = function () {
 
-    var pack = [];
-    for (var i in Bullet.list) {
-        var bullet = Bullet.list[i];
+    const pack = [];
+    for (const i in Bullet.list) {
+        const bullet = Bullet.list[i];
         bullet.update();
         if (bullet.toRemove) {
             delete Bullet.list[i];
@@ -364,35 +360,35 @@ Bullet.update = function () {
 
 
 Bullet.getAllInitPack = function () {
-    var bullets = [];
-    for (var i in Bullet.list) {
+    const bullets = [];
+    for (const i in Bullet.list) {
         bullets.push(Bullet.list[i].getInitPack());
     }
     return bullets;
 }
 
 
-var isValidPassword = function (data, cb) {
+const isValidPassword = function (data, cb) {
     // db.account.find(data, function(err, res) {
     //     // cb((res.length > 0));
     //     cb(true);
     // });
     cb(true);
 }
-var isUsernameTaken = function (data, cb) {
+const isUsernameTaken = function (data, cb) {
     // db.account.find({username:data.username}, function(err, res) {
     //     cb((res.length > 0));
     // });
     cb(false);
 }
-var addUser = function (data, cb) {
+const addUser = function (data, cb) {
     // db.account.insert(data, function(err) {
     //     cb();
     // });
     cb();
 }
 
-var io = require('socket.io')(server, {});
+const io = require('socket.io')(index, {});
 io.sockets.on('connection', function (socket) {
     socket.id = Math.random();
     SOCKET_LIST[socket.id] = socket;
@@ -442,29 +438,29 @@ io.sockets.on('connection', function (socket) {
         if (!DEBUG) {
             return;
         }
-        var res = eval(data);
+        const res = eval(data);
         socket.emit("evalAnswer", res);
     });
 });
 
 
-var initPack = {
+const initPack = {
     player: [],
     bullet: []
 };
-var removePack = {
+const removePack = {
     player: [],
     bullet: []
 };
 
 setInterval(function () {
-    var pack = {
+    const pack = {
         player: Player.update(),
         bullet: Bullet.update()
     };
 
-    for (var i in SOCKET_LIST) {
-        var socket = SOCKET_LIST[i];
+    for (const i in SOCKET_LIST) {
+        const socket = SOCKET_LIST[i];
         socket.emit('init', initPack);
         socket.emit('update', pack);
         socket.emit('remove', removePack);
@@ -475,7 +471,7 @@ setInterval(function () {
     removePack.bullet = [];
 }, 1000 / 25);
 
-var logText = function (text) {
+const logText = function (text) {
 
     fs.appendFile("logs/chat.log", '(' + new Date().toLocaleString() + '): ' + text + '\r\n', function (err) {
         if (err) {
