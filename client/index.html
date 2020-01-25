@@ -1,23 +1,27 @@
 <!doctype html>
-<html>
+<html lang="en">
 
 <head>
     <title>WebSocket + NodeJS + Canvas HTML5 Game</title>
-    <link href="/client/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/client/css/style.css" rel="stylesheet">
+    <link href="./css/bootstrap.min.css" rel="stylesheet">
+    <link href="./css/style.css" rel="stylesheet">
     <link href="https://code.jquery.com/ui/1.12.0/themes/smoothness/jquery-ui.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.2/socket.io.js"></script>
-    <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"
+            integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
+            integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
     <script>
-        $(document).ready(function() {
-            var socket = io();
+        $(document).ready(function () {
+            var socket = io('ws://localhost:8080');
             //logging
+            console.log("sdf");
             var gameDiv = $("#gameDiv");
             var signDiv = $("#signDiv");
             var signDivUsername = $("#signDiv-username");
             var signDivPassword = $("#signDiv-password").hide();
-            var signDivSignUp = $("#signDiv-up").hide();;
+            var signDivSignUp = $("#signDiv-up").hide();
+            ;
             var signDivSignIn = $("#signDiv-in")
             signDivUsername.focus();
 
@@ -31,8 +35,6 @@
             /* PREPARED FOR MAGIC CAMERA */
 
 
-
-
             ///////////////////////////////////////
 
 
@@ -43,12 +45,15 @@
             function updateScroll(el) {
                 el.scrollTop = el.scrollHeight;
             }
+
             // only shift-up if at bottom
             function scrollAtBottom(el) {
                 return (el.scrollTop + 5 >= (el.scrollHeight - el.offsetHeight));
             }
-            $('#signForm').submit(function(e) {
+
+            $('#signForm').submit(function (e) {
                 e.preventDefault();
+                console.log("sdf");
                 if (!signDivUsername.val()) {
                     return;
                 }
@@ -60,11 +65,11 @@
 
             });
 
-            $("#changeMap").click(function() {
+            $("#changeMap").click(function () {
                 changeMap();
             });
 
-            signDivSignUp.click(function() {
+            signDivSignUp.click(function () {
                 socket.emit("signUp", {
                     username: signDivUsername.val(),
                     password: signDivPassword.val()
@@ -72,7 +77,7 @@
             });
 
             var area = $('#message-area');
-            socket.on('signInResponse', function(data) {
+            socket.on('signInResponse', function (data) {
                 if (data.success) {
                     signDiv.hide();
                     gameDiv.show();
@@ -80,7 +85,7 @@
                     area.html("Neplatné přihlášení");
                 }
             });
-            socket.on('signUpResponse', function(data) {
+            socket.on('signUpResponse', function (data) {
                 if (data.success) {
                     area.html("Registrace proběhla úspěšně")
                 } else {
@@ -91,22 +96,22 @@
 
             var Img = {};
             Img.player = new Image();
-            Img.player.src = '/client/img/avatar.png';
+            Img.player.src = './img/avatar.png';
             Img.bulletEnemy = new Image();
-            Img.bulletEnemy.src = '/client/img/bulletEnemy.png';
+            Img.bulletEnemy.src = './img/bulletEnemy.png';
             Img.bullet = new Image();
-            Img.bullet.src = '/client/img/bullet.png';
+            Img.bullet.src = './img/bullet.png';
             Img.map = {};
             Img.map['wow'] = new Image();
-            Img.map['wow'].src = '/client/img/map.jpg';
+            Img.map['wow'].src = './img/map.jpg';
             Img.map['field'] = new Image();
-            Img.map['field'].src = '/client/img/field.jpg';
+            Img.map['field'].src = './img/field.jpg';
 
             var ctx = document.getElementById("ctx").getContext("2d");
             var ctxUi = document.getElementById("ctx-ui").getContext("2d");
             var WIDTH;
             var HEIGHT;
-            var setDimension = function(w, h) {
+            var setDimension = function (w, h) {
                 w -= 20;
                 h -= 20;
                 WIDTH = w
@@ -118,12 +123,12 @@
                 $('#ui').width(w);
                 $('#ui').height(h);
             }
-            var w =  $(window).width();
+            var w = $(window).width();
             var h = $(window).height();
             setDimension(w, h);
 
-            $(window).resize(function() {
-                var w =  $(this).width();
+            $(window).resize(function () {
+                var w = $(this).width();
                 var h = $(this).height();
                 setDimension(w, h)
                 socket.emit("setCanvas", {
@@ -132,7 +137,7 @@
                 });
             });
 
-            var Player = function(initPack) {
+            var Player = function (initPack) {
                 var self = {};
                 self.id = initPack.id;
                 self.number = initPack.number;
@@ -144,7 +149,7 @@
                 self.map = initPack.map;
                 self.username = initPack.username;
 
-                self.draw = function() {
+                self.draw = function () {
                     if (Player.list[selfId].map !== self.map) {
                         return;
                     }
@@ -183,7 +188,8 @@
                 canvas.fillStyle = '#000';
                 canvas.fillRect(xPos - (thickness), yPos - (thickness), width + (thickness * 2), height + (thickness * 2));
             }
-            var Bullet = function(initPack) {
+
+            var Bullet = function (initPack) {
                 var self = {};
                 self.id = initPack.id;
                 self.x = initPack.x;
@@ -196,7 +202,7 @@
                     self.img = Img.bulletEnemy;
                 }
 
-                self.draw = function() {
+                self.draw = function () {
                     if (Player.list[selfId].map !== self.map) {
                         return;
                     }
@@ -216,7 +222,7 @@
             Bullet.list = {};
 
             var selfId = null;
-            socket.on('init', function(data) {
+            socket.on('init', function (data) {
                 if (data.selfId) {
                     selfId = data.selfId;
                 }
@@ -229,7 +235,7 @@
                 }
             });
 
-            socket.on('update', function(data) {
+            socket.on('update', function (data) {
                 //{ player : [{id:123,x:0,y:0},{id:1,x:0,y:0}], bullet: []}
                 for (var i = 0; i < data.player.length; i++) {
                     var pack = data.player[i];
@@ -261,7 +267,7 @@
                 }
             });
 
-            socket.on('remove', function(data) {
+            socket.on('remove', function (data) {
                 //{player:[12323],bullet:[12323,123123]}
                 for (var i = 0; i < data.player.length; i++) {
                     delete Player.list[data.player[i]];
@@ -271,7 +277,7 @@
                 }
             });
             var bgImage = new Image();
-            bgImage.src = '/client/img/escheresque_ste.png';
+            bgImage.src = './img/escheresque_ste.png';
             //  var lastRepaintTime=window.performance.now();
             //  function bg(canvas){
             //      var player = Player.list[selfId];
@@ -290,7 +296,7 @@
             //       ctx.fill();
             //     }
 
-            var render = function() {
+            var render = function () {
                 if (!selfId) {
                     return;
                 }
@@ -301,10 +307,10 @@
                 drawMap();
                 drawScore();
                 // ctx.fillText('P', data.player.x, data.player.y);
-                for (var i in Player.list)  {
+                for (var i in Player.list) {
                     Player.list[i].draw();
                 }
-                for (var i in Bullet.list)  {
+                for (var i in Bullet.list) {
                     Bullet.list[i].draw();
                 }
             }
@@ -327,20 +333,20 @@
             setInterval(render, 1000 / 25);
 
             var bgImage = new Image();
-            bgImage.src = '/client/img/escheresque_ste.png';
-            var drawMap = function() {
+            bgImage.src = './img/escheresque_ste.png';
+            var drawMap = function () {
                 var player = Player.list[selfId];
                 var x = WIDTH / 2 - player.x;
                 var y = HEIGHT / 2 - player.y;
                 ctx.drawImage(Img.map[player.map], x, y);
             }
 
-            var changeMap = function() {
+            var changeMap = function () {
                 socket.emit("changeMap");
             }
 
             var lastScore = null
-            var drawScore = function() {
+            var drawScore = function () {
                 if (lastScore === Player.list[selfId].score) {
                     return;
                 }
@@ -350,7 +356,7 @@
                 ctxUi.fillText(Player.list[selfId].score, 10, 30)
             }
 
-            socket.on('addToChat', function(data) {
+            socket.on('addToChat', function (data) {
                 var before = data.before;
                 var colored = 'colored';
                 if (before === undefined) {
@@ -360,24 +366,24 @@
                 chatText.prepend('<p class="' + colored + '">' + before + ' <b class="mgsplayer">[' + data.player + ']</b>: ' + data.msg + '</p>');
             });
 
-            socket.on('evalAnswer', function(data) {
+            socket.on('evalAnswer', function (data) {
                 console.log(data);
             });
 
-            $(document).on('click', '.mgsplayer', function() {
+            $(document).on('click', '.mgsplayer', function () {
                 var playername = $(this).html().slice(1, -1);
                 chatForm.show();
                 chatFormLabel.html(playername);
                 chatInput.focus();
             });
-            chatInput.keypress(function(event) {
+            chatInput.keypress(function (event) {
                 var parts = chatInput.val().split(" ");
-                if (parts[0] == '/w' && parts.length == 2  && event.keyCode === 32) {
+                if (parts[0] == '/w' && parts.length == 2 && event.keyCode === 32) {
                     chatFormLabel.html(parts[1]);
                     chatInput.val("");
                 }
             });
-            chatForm.submit(function(e) {
+            chatForm.submit(function (e) {
                 e.preventDefault();
                 var komu = chatFormLabel.html();
                 var parts = chatInput.val().split(" ");
@@ -397,44 +403,44 @@
                 chatInput.val("");
             });
 
-            document.onkeydown = function(event) {
+            document.onkeydown = function (event) {
                 if (!chatForm.is(':visible')) {
-                    if (event.keyCode === 68)  { //d
+                    if (event.keyCode === 68) { //d
                         socket.emit('keyPress', {
                             inputId: "right",
                             state: true
                         });
                     }
-                    if (event.keyCode === 83)  { //s
+                    if (event.keyCode === 83) { //s
                         socket.emit('keyPress', {
                             inputId: "down",
                             state: true
                         });
                     }
-                    if (event.keyCode === 65)  { //a
+                    if (event.keyCode === 65) { //a
                         socket.emit('keyPress', {
                             inputId: "left",
                             state: true
                         });
                     }
-                    if (event.keyCode === 87)  { //w
+                    if (event.keyCode === 87) { //w
                         socket.emit('keyPress', {
                             inputId: "up",
                             state: true
                         });
                     }
-                    if (event.keyCode === 32)  { //spacebar
+                    if (event.keyCode === 32) { //spacebar
                         socket.emit('keyPress', {
                             inputId: "nova",
                             state: true
                         });
                     }
                 } else {
-                    chatInput.focusout(function() {
+                    chatInput.focusout(function () {
                         this.focus();
                     });
                 }
-                if (event.keyCode === 13)  { //enter
+                if (event.keyCode === 13) { //enter
                     if (!signDiv.is(':visible')) {
                         chatForm.toggle();
                         chatInput.focus();
@@ -443,51 +449,51 @@
             }
 
 
-            document.onkeyup = function(event) {
-                if (event.keyCode === 68)  { //d
+            document.onkeyup = function (event) {
+                if (event.keyCode === 68) { //d
                     socket.emit('keyPress', {
                         inputId: "right",
                         state: false
                     });
                 }
-                if (event.keyCode === 83)  { //s
+                if (event.keyCode === 83) { //s
                     socket.emit('keyPress', {
                         inputId: "down",
                         state: false
                     });
                 }
-                if (event.keyCode === 65)  { //a
+                if (event.keyCode === 65) { //a
                     socket.emit('keyPress', {
                         inputId: "left",
                         state: false
                     });
                 }
-                if (event.keyCode === 87)  { //w
+                if (event.keyCode === 87) { //w
                     socket.emit('keyPress', {
                         inputId: "up",
                         state: false
                     });
                 }
-                if (event.keyCode === 32)  { //spacebar
+                if (event.keyCode === 32) { //spacebar
                     socket.emit('keyPress', {
                         inputId: "nova",
                         state: false
                     });
                 }
             }
-            document.onmousedown = function(event) {
+            document.onmousedown = function (event) {
                 socket.emit('keyPress', {
                     inputId: "attack",
                     state: true
                 });
             }
-            document.onmouseup = function(event) {
+            document.onmouseup = function (event) {
                 socket.emit('keyPress', {
                     inputId: "attack",
                     state: false
                 });
             }
-            document.onmousemove = function(event) {
+            document.onmousemove = function (event) {
                 var x = -WIDTH / 2 + event.clientX - 8;
                 var y = -HEIGHT / 2 + event.clientY - 8;
                 var angle = Math.atan2(y, x) / Math.PI * 180;
@@ -501,47 +507,47 @@
 </head>
 
 <body>
-    <div id="signDiv">
-        <h2>MMO Progres Fight</h2>
-        <form id="signForm">
-            <label for="signDiv-username">
+<div id="signDiv">
+    <h2>MMO Progres Fight</h2>
+    <form id="signForm">
+        <label for="signDiv-username">
             Nick:
         </label>
-            <input class="form-control" id="signDiv-username"><br>
-            <!-- <label for="signDiv-password">
-            Heslo:
-        </label> -->
-            <input style="display:none;" class="form-control" id="signDiv-password" type="password"><br>
-            <input type="submit" class="btn btn-success" id="signDiv-in" value="Přihlásit">
-        </form>
-        <br>
-        <button style="display:none;" class="btn btn-info" id="signDiv-up">Registrovat</button>
+        <input class="form-control" id="signDiv-username"><br>
+        <!-- <label for="signDiv-password">
+        Heslo:
+    </label> -->
+        <input style="display:none;" class="form-control" id="signDiv-password" type="password"><br>
+        <input type="submit" class="btn btn-success" id="signDiv-in" value="Přihlásit">
+    </form>
+    <br>
+    <button style="display:none;" class="btn btn-info" id="signDiv-up">Registrovat</button>
 
-        <span class="color-info" id="message-area"></span>
-    </div>
-    <div id="gameDiv">
-        <canvas id="ctx" style="position:absolute; top:8px;left:8px;  border:1px solid black"></canvas>
-        <canvas id="ctx-ui" style="position:absolute; top:8px;left:8px; border:1px solid black"></canvas>
-        <div id="ui" style="position:absolute; top:8px;left:8px;">
-            <!-- <button id="changeMap" class="btn btn-danger" style="bottom:10px;right:10px; position:absolute;">Změnit mapu</button> -->
-            <div id="chat">
-                <div id="chatdiv" class="chat-window">
-                    <div id="chat-text" class="chat-messages" style="overflow:auto;">
-                        <div class="chat-messages-text" id="messages">
-                            <p>Vítejte na serveru</p>
-                        </div>
+    <span class="color-info" id="message-area"></span>
+</div>
+<div id="gameDiv">
+    <canvas id="ctx" style="position:absolute; top:8px;left:8px;  border:1px solid black"></canvas>
+    <canvas id="ctx-ui" style="position:absolute; top:8px;left:8px; border:1px solid black"></canvas>
+    <div id="ui" style="position:absolute; top:8px;left:8px;">
+        <!-- <button id="changeMap" class="btn btn-danger" style="bottom:10px;right:10px; position:absolute;">Změnit mapu</button> -->
+        <div id="chat">
+            <div id="chatdiv" class="chat-window">
+                <div id="chat-text" class="chat-messages" style="overflow:auto;">
+                    <div class="chat-messages-text" id="messages">
+                        <p>Vítejte na serveru</p>
                     </div>
                 </div>
-                <form id="chat-form" autocomplete="off">
-                    <label for="chat-input">Všem</label><input type="text" id="chat-input">
-                </form>
             </div>
-            <div id="position">
-                <span>[100,100]</span>
-            </div>
+            <form id="chat-form" autocomplete="off">
+                <label for="chat-input">Všem</label><input type="text" id="chat-input">
+            </form>
+        </div>
+        <div id="position">
+            <span>[100,100]</span>
         </div>
     </div>
-    <!-- <script src="client/js/camera.js" type="text/javascript"></script> -->
+</div>
+<!-- <script src="client/js/camera.js" type="text/javascript"></script> -->
 
 </body>
 

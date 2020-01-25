@@ -1,68 +1,35 @@
 const express = require('express');
 const app = express();
-const index = require('http').Server(app);
+const server = require('http').Server(app);
+
+import Entity from './entity';
 
 const fs = require('fs');
-console.log(__dirname);
 app.get("/", function (req, res) {
-    res.sendFile(__dirname + '/client/index.html');
+    res.sendFile('/index.html');
 });
 
-app.use('/client', express.static(__dirname + '/client'));
+app.use(express.static(__dirname + '/../client'));
 
+// eslint-disable-next-line no-undef
 const port = process.env.PORT || 8080;
-const ip = '127.0.0.1';
+const ip = process.env.IP || '127.0.0.1';
 
-index.listen(port, function () {
-    console.log("Listening on " + ip + ":" + port)
+server.listen(port, function () {
+    console.log("Listening on " + ip + ":" + port);
+    console.log("Testing env VAR", process.env.TEST)
 });
 
 const SOCKET_LIST = {};
 const DEBUG = false;
-const canvasWidth = 500;
-const canvasHeight = 500;
-
-const Entity = function (param) {
-    const self = {
-        x: 250,
-        y: 250,
-        speedX: 0,
-        speedY: 0,
-        id: "",
-        map: 'wow'
-    };
-    if (param.x) {
-        self.x = param.x;
-    }
-    if (param.y) {
-        self.y = param.y;
-    }
-    if (param.map) {
-        self.map = param.map;
-    }
-    if (param.id) {
-        self.id = param.id;
-    }
-    self.update = function () {
-        self.updatePosition();
-    }
-
-    self.updatePosition = function () {
-        self.x += self.speedX;
-        self.y += self.speedY;
-    }
-
-    self.getDistance = function (pt) {
-        return Math.sqrt(Math.pow(self.x - pt.x, 2) + Math.pow(self.y - pt.y, 2));
-    }
-    return self;
-}
+let canvasWidth = 500;
+let canvasHeight = 500;
 
 const Player = function (param) {
     const self = Entity(param);
     self.number = "" + Math.floor(10 * Math.random());
     self.pressingRight = false;
-    self.pressingLeft = false;
+    self.pressingLeft =     false;
     self.pressingUp = false;
     self.pressingDown = false;
     self.pressingAttack = false;
@@ -85,7 +52,7 @@ const Player = function (param) {
         }
 
         if (self.pressingNova) {
-            for (i = 0; i < 360; i += 180) {
+            for (let i = 0; i < 360; i += 180) {
                 self.shootBullet(self.mouseAngle + i);
             }
         }
@@ -116,7 +83,7 @@ const Player = function (param) {
         } else {
             self.speedY = 0;
         }
-    }
+    };
 
     self.getInitPack = function () {
         return {
@@ -216,7 +183,7 @@ Player.onConnect = function (socket, data) {
     });
 
     socket.on('sendPmToServer', function (data) {
-        const recipientSocket = null;
+        let recipientSocket = null;
         for (const i in Player.list) {
             if (Player.list[i].username === data.username) {
                 recipientSocket = SOCKET_LIST[i];
@@ -388,7 +355,7 @@ const addUser = function (data, cb) {
     cb();
 }
 
-const io = require('socket.io')(index, {});
+const io = require('socket.io')(server, {});
 io.sockets.on('connection', function (socket) {
     socket.id = Math.random();
     SOCKET_LIST[socket.id] = socket;
@@ -474,8 +441,5 @@ setInterval(function () {
 const logText = function (text) {
 
     fs.appendFile("logs/chat.log", '(' + new Date().toLocaleString() + '): ' + text + '\r\n', function (err) {
-        if (err) {
-            // return console.log(err);
-        }
     });
 };
