@@ -2,17 +2,21 @@
   "name": "server",
   "version": "1.0.0",
   "main": "index.js",
+  "license": "MIT",
+  "private": false,
   "scripts": {
-    "start": "node src/index.ts",
     "tsc": "tsc",
-    "dev": "ts-node-dev --respawn --transpileOnly ./src/index.ts",
+    "start": "ts-node-dev --respawn --transpileOnly ./server/src/index.ts",
     "prod": "tsc && node ./build/app.js"
   },
-  "license": "MIT",
   "exports": {
     ".": ".src/index.ts",
     "./module": ".src/index.ts"
   },
+  "workspaces": [
+    "client/*",
+    "server/*"
+  ],
   "dependencies": {
     "@types/express": "^4.17.2",
     "eslint-config-airbnb": "^18.0.1",

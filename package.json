@@ -1,0 +1,16 @@
+{
+  "name": "nodegame",
+  "version": "1.0.0",
+  "engines": {
+    "node": "13.7.x",
+    "yarn": "1.15.x"
+  },
+  "private": true,
+  "workspaces": [
+    "server",
+    "client"
+  ],
+  "repository": "git@github.com:progresak/nodegame.git",
+  "author": "Lukáš Kratochvíl <kratochvil.lukas9@gmail.com>",
+  "license": "MIT"
+}
