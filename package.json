@@ -10,6 +10,9 @@
     "server",
     "client"
   ],
+  "scripts": {
+    "heroku-postbuild": "./heroku/heroku.build"
+  },
   "repository": "git@github.com:progresak/nodegame.git",
   "author": "Lukáš Kratochvíl <kratochvil.lukas9@gmail.com>",
   "license": "MIT"
