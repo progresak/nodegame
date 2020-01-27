@@ -6,20 +6,18 @@ const Entity = ({ x = 250, y = 250, map = 'wow', id = null}) => {
         speedY: 0,
         id,
         map,
-        getDistance: undefined,
-        update: undefined,
     };
 
-    self.update = function () {
+    self.update = () => {
         self.x += self.speedX;
         self.y += self.speedY;
     };
 
-    self.getDistance = function ({x, y}) {
+    self.getDistance = ({ x, y }) => {
         return Math.sqrt(Math.pow(self.x - x, 2) + Math.pow(self.y - y, 2));
     };
 
-       return self;
+    return self;
 };
 
 export default Entity;

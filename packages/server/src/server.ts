@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const server = require('http').Server(app);
 
-import Entity from './entity';
+import Entity from './entities/Entity';
 
 const fs = require('fs');
 app.get("/", function (req, res) {

@@ -1,13 +1,17 @@
 {
-  "name": "server",
+  "name": "@nodegame/server",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
   "private": false,
   "scripts": {
     "tsc": "tsc",
-    "start": "ts-node-dev --respawn --transpileOnly ./server/src/index.ts",
+    "start": "ts-node-dev --respawn --transpileOnly ./src/index.ts",
     "prod": "tsc && node ./build/app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/progresak/nodegame"
   },
   "exports": {
     ".": ".src/index.ts",
