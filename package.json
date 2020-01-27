@@ -10,9 +10,6 @@
   "workspaces": [
     "packages/*"
   ],
-  "scripts": {
-    "heroku-postbuild": "./heroku/heroku.build"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/progresak/nodegame"
