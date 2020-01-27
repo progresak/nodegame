@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
-  "private": false,
+  "private": true,
   "scripts": {
     "tsc": "tsc",
     "start": "ts-node-dev --respawn --transpileOnly ./src/index.ts",
