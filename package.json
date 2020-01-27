@@ -15,5 +15,8 @@
     "url": "https://github.com/progresak/nodegame"
   },
   "author": "Lukáš Kratochvíl <kratochvil.lukas9@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "engines": {
+    "yarn": "1.15.x"
+  }
 }
