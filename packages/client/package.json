@@ -3,10 +3,16 @@
   "version": "1.0.0",
   "private": true,
   "main": "index.tsx",
+  "engines": {
+    "node": "12.x",
+    "yarn": "1.15.x"
+  },
   "scripts": {
     "dev": "webpack-dev-server --mode development --hot",
     "build": "webpack --mode production",
-    "start": "node server.js"
+    "start": "node server.js",
+    "heroku-postbuild": "yarn start",
+    "postinstall": "yarn build"
   },
   "dependencies": {
     "@material-ui/core": "^4.9.0",

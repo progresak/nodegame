@@ -4,10 +4,16 @@
   "main": "index.js",
   "license": "MIT",
   "private": true,
+  "engines": {
+    "node": "12.x",
+    "yarn": "1.15.x"
+  },
   "scripts": {
     "tsc": "tsc",
-    "start": "ts-node-dev --respawn --transpileOnly ./src/index.ts",
-    "prod": "tsc && node ./build/app.js"
+    "start-ts": "ts-node-dev --respawn --transpileOnly ./src/index.ts",
+    "start": "node ./src/index.js",
+    "prod": "tsc && node ./build/app.js",
+    "heroku-postbuild": "yarn prod"
   },
   "repository": {
     "type": "git",

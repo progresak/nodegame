@@ -5,19 +5,17 @@ const server = require('http').Server(app);
 import Entity from './entities/Entity';
 
 const fs = require('fs');
-app.get("/", function (req, res) {
-    res.sendFile('/index.html');
-});
 
-app.use(express.static(__dirname + '/../client'));
+app.get('/*', (req, res) => res.send('Server without render'));
+
+// app.use(express.static(__dirname + '/../client'));
 
 // eslint-disable-next-line no-undef
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 8888;
 const ip = process.env.IP || '127.0.0.1';
 
 server.listen(port, function () {
     console.log("Listening on " + ip + ":" + port);
-    console.log("Testing env VAR", process.env.TEST)
 });
 
 const SOCKET_LIST = {};
