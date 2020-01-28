@@ -1,11 +1,6 @@
 {
   "name": "nodegame",
   "version": "1.0.0",
-  "engines": {
-    "node": "12.x.x",
-    "yarn": "1.15.x"
-  },
-
   "private": true,
   "workspaces": [
     "packages/*"
@@ -17,6 +12,7 @@
   "author": "Lukáš Kratochvíl <kratochvil.lukas9@gmail.com>",
   "license": "MIT",
   "engines": {
+    "node": "12.x.x",
     "yarn": "1.15.x"
   }
 }
