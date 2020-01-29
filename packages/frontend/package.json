@@ -10,6 +10,7 @@
   "scripts": {
     "dev": "webpack-dev-server --mode development --hot",
     "build": "webpack --mode production",
+    "heroku-postbuild": "echo 'Deploy successfull'",
     "start": "node server.js"
   },
   "repository": {
