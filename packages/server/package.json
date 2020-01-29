@@ -10,7 +10,7 @@
   "scripts": {
     "tsc": "tsc",
     "start-ts": "ts-node-dev --respawn --transpileOnly ./src/index.ts",
-    "start": "node ./src/index.js",
+    "start": "node ./src/server.js",
     "prod": "tsc && node ./build/app.js"
   },
   "repository": {

@@ -1,5 +1,6 @@
 $(document).ready(function () {
-    var socket = io('ws://localhost:8080');
+    var socket = io('https://backend-mmo.herokuapp.com/');
+    // var socket = io('http://localhost:8888');
     //logging
     console.log("sdf");
     var gameDiv = $("#gameDiv");
@@ -11,21 +12,19 @@ $(document).ready(function () {
     var signDivSignIn = $("#signDiv-in")
     signDivUsername.focus();
 
-    var chatText = $("#chat-text");
-    var chatForm = $("#chat-form");
-    var chatFormLabel = $("#chat-form label");
-    var chatInput = $("#chat-input");
+    var chatText = $('#chat-text');
+    var chatForm = $('#chat-form');
+    var chatFormLabel = $('#chat-form label');
+    var chatInput = $('#chat-input');
     // scroll to bottom
 
-    ///////////////////////////////////////
+    // /////////////////////////////////////
     /* PREPARED FOR MAGIC CAMERA */
 
+    // /////////////////////////////////////
 
-    ///////////////////////////////////////
-
-
-    $("#chat").draggable({
-        containment: "parent"
+    $('#chat').draggable({
+        containment: 'parent',
     });
 
     function updateScroll(el) {
@@ -37,45 +36,44 @@ $(document).ready(function () {
         return (el.scrollTop + 5 >= (el.scrollHeight - el.offsetHeight));
     }
 
-    $('#signForm').submit(function (e) {
+    $('#signForm').submit(e => {
         e.preventDefault();
-        console.log("sdf");
+        console.log('sdf');
         if (!signDivUsername.val()) {
             return;
         }
         $('body').addClass('game');
-        socket.emit("signIn", {
+        socket.emit('signIn', {
             username: signDivUsername.val(),
-            password: signDivPassword.val()
+            password: signDivPassword.val(),
         });
-
     });
 
-    $("#changeMap").click(function () {
+    $('#changeMap').click(() => {
         changeMap();
     });
 
-    signDivSignUp.click(function () {
-        socket.emit("signUp", {
+    signDivSignUp.click(() => {
+        socket.emit('signUp', {
             username: signDivUsername.val(),
-            password: signDivPassword.val()
+            password: signDivPassword.val(),
         });
     });
 
     var area = $('#message-area');
-    socket.on('signInResponse', function (data) {
+    socket.on('signInResponse', data => {
         if (data.success) {
             signDiv.hide();
             gameDiv.show();
         } else {
-            area.html("Neplatné přihlášení");
+            area.html('Neplatné přihlášení');
         }
     });
-    socket.on('signUpResponse', function (data) {
+    socket.on('signUpResponse', data => {
         if (data.success) {
-            area.html("Registrace proběhla úspěšně")
+            area.html('Registrace proběhla úspěšně');
         } else {
-            area.html("Jméno již existuje");
+            area.html('Jméno již existuje');
         }
     });
     // Game
@@ -88,27 +86,27 @@ $(document).ready(function () {
     Img.bullet = new Image();
     Img.bullet.src = './img/bullet.png';
     Img.map = {};
-    Img.map['wow'] = new Image();
-    Img.map['wow'].src = './img/map.jpg';
-    Img.map['field'] = new Image();
-    Img.map['field'].src = './img/field.jpg';
+    Img.map.wow = new Image();
+    Img.map.wow.src = './img/map.jpg';
+    Img.map.field = new Image();
+    Img.map.field.src = './img/field.jpg';
 
-    var ctx = document.getElementById("ctx").getContext("2d");
-    var ctxUi = document.getElementById("ctx-ui").getContext("2d");
+    var ctx = document.getElementById('ctx').getContext('2d');
+    var ctxUi = document.getElementById('ctx-ui').getContext('2d');
     var WIDTH;
     var HEIGHT;
     var setDimension = function (w, h) {
         w -= 20;
         h -= 20;
-        WIDTH = w
-        HEIGHT = h
+        WIDTH = w;
+        HEIGHT = h;
         ctx.canvas.width = w;
         ctx.canvas.height = h;
         ctxUi.canvas.width = w;
         ctxUi.canvas.height = h;
         $('#ui').width(w);
         $('#ui').height(h);
-    }
+    };
     var w = $(window).width();
     var h = $(window).height();
     setDimension(w, h);
@@ -116,10 +114,10 @@ $(document).ready(function () {
     $(window).resize(function () {
         var w = $(this).width();
         var h = $(this).height();
-        setDimension(w, h)
-        socket.emit("setCanvas", {
+        setDimension(w, h);
+        socket.emit('setCanvas', {
             width: w,
-            height: h
+            height: h,
         });
     });
 
@@ -146,15 +144,15 @@ $(document).ready(function () {
             ctxUi.fillStyle = 'white';
             ctxUi.font = '16px Arial';
 
-            ctx.textAlign = "center";
-            ctxUi.textAlign = "center";
+            ctx.textAlign = 'center';
+            ctxUi.textAlign = 'center';
             ctxUi.fillText(self.username, x, y - 45);
 
             drawBorder(ctx, x - hpWidth / 2, y - 38, hpWidth, 11);
             ctx.fillStyle = 'red';
             ctxUi.fillStyle = 'black';
             ctxUi.font = '12px Arial';
-            ctxUi.fillText(self.hp, x, y - 28)
+            ctxUi.fillText(self.hp, x, y - 28);
             ctx.fillRect(x - hpWidth / 2, y - 38, hpWidth, 11);
 
             var height = Img.player.width;
@@ -163,11 +161,11 @@ $(document).ready(function () {
             ctx.drawImage(Img.player,
                 0, 0, Img.player.width, Img.player.height,
                 x - width / 2, y - height / 2, width, height);
-        }
+        };
 
         Player.list[self.id] = self;
         return self;
-    }
+    };
     Player.list = {};
 
     function drawBorder(canvas, xPos, yPos, width, height, thickness = 1) {
@@ -192,27 +190,26 @@ $(document).ready(function () {
             if (Player.list[selfId].map !== self.map) {
                 return;
             }
-            var width = Img.bullet.width;
-            var height = Img.bullet.height;
+            var { width } = Img.bullet;
+            var { height } = Img.bullet;
 
             var x = self.x - Player.list[selfId].x + WIDTH / 2;
             var y = self.y - Player.list[selfId].y + HEIGHT / 2;
             ctx.drawImage(self.img, 0, 0, self.img.width, self.img.height,
                 x - width / 2, y - height / 2, width, height);
-
-        }
+        };
         Bullet.list[self.id] = self;
 
         return self;
-    }
+    };
     Bullet.list = {};
 
     var selfId = null;
-    socket.on('init', function (data) {
+    socket.on('init', data => {
         if (data.selfId) {
             selfId = data.selfId;
         }
-        //{ player : [{id:123,number:'1',x:0,y:0},{id:1,number:'2',x:0,y:0}], bullet: []}
+        // { player : [{id:123,number:'1',x:0,y:0},{id:1,number:'2',x:0,y:0}], bullet: []}
         for (var i = 0; i < data.player.length; i++) {
             new Player(data.player[i]);
         }
@@ -221,40 +218,33 @@ $(document).ready(function () {
         }
     });
 
-    socket.on('update', function (data) {
-        //{ player : [{id:123,x:0,y:0},{id:1,x:0,y:0}], bullet: []}
+    socket.on('update', data => {
+        // { player : [{id:123,x:0,y:0},{id:1,x:0,y:0}], bullet: []}
         for (var i = 0; i < data.player.length; i++) {
             var pack = data.player[i];
             var p = Player.list[pack.id];
             if (p) {
-                if (pack.x !== undefined)
-                    p.x = pack.x;
-                if (pack.y !== undefined)
-                    p.y = pack.y;
-                if (pack.hp !== undefined)
-                    p.hp = pack.hp;
-                if (pack.score !== undefined)
-                    p.score = pack.score;
-                if (pack.map !== undefined)
-                    p.map = pack.map;
+                if (pack.x !== undefined) { p.x = pack.x; }
+                if (pack.y !== undefined) { p.y = pack.y; }
+                if (pack.hp !== undefined) { p.hp = pack.hp; }
+                if (pack.score !== undefined) { p.score = pack.score; }
+                if (pack.map !== undefined) { p.map = pack.map; }
 
-                $("#position span").html("[" + p.x + ", " + p.y + "]");
+                $('#position span').html('[' + p.x + ', ' + p.y + ']');
             }
         }
         for (var i = 0; i < data.bullet.length; i++) {
             var pack = data.bullet[i];
             var b = Bullet.list[data.bullet[i].id];
             if (b) {
-                if (pack.x !== undefined)
-                    b.x = pack.x;
-                if (pack.y !== undefined)
-                    b.y = pack.y;
+                if (pack.x !== undefined) { b.x = pack.x; }
+                if (pack.y !== undefined) { b.y = pack.y; }
             }
         }
     });
 
-    socket.on('remove', function (data) {
-        //{player:[12323],bullet:[12323,123123]}
+    socket.on('remove', data => {
+        // {player:[12323],bullet:[12323,123123]}
         for (var i = 0; i < data.player.length; i++) {
             delete Player.list[data.player[i]];
         }
@@ -299,7 +289,7 @@ $(document).ready(function () {
         for (var i in Bullet.list) {
             Bullet.list[i].draw();
         }
-    }
+    };
     //
     // window.requestAnimFrame = (function(){
     //   return  window.requestAnimationFrame       ||
@@ -325,13 +315,13 @@ $(document).ready(function () {
         var x = WIDTH / 2 - player.x;
         var y = HEIGHT / 2 - player.y;
         ctx.drawImage(Img.map[player.map], x, y);
-    }
+    };
 
     var changeMap = function () {
-        socket.emit("changeMap");
-    }
+        socket.emit('changeMap');
+    };
 
-    var lastScore = null
+    var lastScore = null;
     var drawScore = function () {
         if (lastScore === Player.list[selfId].score) {
             return;
@@ -339,11 +329,11 @@ $(document).ready(function () {
         ctxUi.font = '30px Arial';
         ctxUi.clearRect(0, 0, WIDTH, HEIGHT);
         ctxUi.fillStyle = 'white';
-        ctxUi.fillText(Player.list[selfId].score, 10, 30)
-    }
+        ctxUi.fillText(Player.list[selfId].score, 10, 30);
+    };
 
-    socket.on('addToChat', function (data) {
-        var before = data.before;
+    socket.on('addToChat', data => {
+        var { before } = data;
         var colored = 'colored';
         if (before === undefined) {
             before = '';
@@ -352,7 +342,7 @@ $(document).ready(function () {
         chatText.prepend('<p class="' + colored + '">' + before + ' <b class="mgsplayer">[' + data.player + ']</b>: ' + data.msg + '</p>');
     });
 
-    socket.on('evalAnswer', function (data) {
+    socket.on('evalAnswer', data => {
         console.log(data);
     });
 
@@ -362,63 +352,63 @@ $(document).ready(function () {
         chatFormLabel.html(playername);
         chatInput.focus();
     });
-    chatInput.keypress(function (event) {
-        var parts = chatInput.val().split(" ");
+    chatInput.keypress(event => {
+        var parts = chatInput.val().split(' ');
         if (parts[0] == '/w' && parts.length == 2 && event.keyCode === 32) {
             chatFormLabel.html(parts[1]);
-            chatInput.val("");
+            chatInput.val('');
         }
     });
-    chatForm.submit(function (e) {
+    chatForm.submit(e => {
         e.preventDefault();
         var komu = chatFormLabel.html();
-        var parts = chatInput.val().split(" ");
+        var parts = chatInput.val().split(' ');
         if (!chatInput.val() || (parts[0] == '/w' && parts.length == 2)) {
-            chatInput.val("");
+            chatInput.val('');
             return;
         }
-        if (komu === "Všem") {
-            socket.emit("sendMsgToServer", chatInput.val());
+        if (komu === 'Všem') {
+            socket.emit('sendMsgToServer', chatInput.val());
         } else {
-            socket.emit("sendPmToServer", {
+            socket.emit('sendPmToServer', {
                 username: komu,
-                message: chatInput.val()
+                message: chatInput.val(),
             });
-            chatFormLabel.html("Všem");
+            chatFormLabel.html('Všem');
         }
-        chatInput.val("");
+        chatInput.val('');
     });
 
     document.onkeydown = function (event) {
         if (!chatForm.is(':visible')) {
-            if (event.keyCode === 68) { //d
+            if (event.keyCode === 68) { // d
                 socket.emit('keyPress', {
-                    inputId: "right",
-                    state: true
+                    inputId: 'right',
+                    state: true,
                 });
             }
-            if (event.keyCode === 83) { //s
+            if (event.keyCode === 83) { // s
                 socket.emit('keyPress', {
-                    inputId: "down",
-                    state: true
+                    inputId: 'down',
+                    state: true,
                 });
             }
-            if (event.keyCode === 65) { //a
+            if (event.keyCode === 65) { // a
                 socket.emit('keyPress', {
-                    inputId: "left",
-                    state: true
+                    inputId: 'left',
+                    state: true,
                 });
             }
-            if (event.keyCode === 87) { //w
+            if (event.keyCode === 87) { // w
                 socket.emit('keyPress', {
-                    inputId: "up",
-                    state: true
+                    inputId: 'up',
+                    state: true,
                 });
             }
-            if (event.keyCode === 32) { //spacebar
+            if (event.keyCode === 32) { // spacebar
                 socket.emit('keyPress', {
-                    inputId: "nova",
-                    state: true
+                    inputId: 'nova',
+                    state: true,
                 });
             }
         } else {
@@ -426,66 +416,65 @@ $(document).ready(function () {
                 this.focus();
             });
         }
-        if (event.keyCode === 13) { //enter
+        if (event.keyCode === 13) { // enter
             if (!signDiv.is(':visible')) {
                 chatForm.toggle();
                 chatInput.focus();
             }
         }
-    }
-
+    };
 
     document.onkeyup = function (event) {
-        if (event.keyCode === 68) { //d
+        if (event.keyCode === 68) { // d
             socket.emit('keyPress', {
-                inputId: "right",
-                state: false
+                inputId: 'right',
+                state: false,
             });
         }
-        if (event.keyCode === 83) { //s
+        if (event.keyCode === 83) { // s
             socket.emit('keyPress', {
-                inputId: "down",
-                state: false
+                inputId: 'down',
+                state: false,
             });
         }
-        if (event.keyCode === 65) { //a
+        if (event.keyCode === 65) { // a
             socket.emit('keyPress', {
-                inputId: "left",
-                state: false
+                inputId: 'left',
+                state: false,
             });
         }
-        if (event.keyCode === 87) { //w
+        if (event.keyCode === 87) { // w
             socket.emit('keyPress', {
-                inputId: "up",
-                state: false
+                inputId: 'up',
+                state: false,
             });
         }
-        if (event.keyCode === 32) { //spacebar
+        if (event.keyCode === 32) { // spacebar
             socket.emit('keyPress', {
-                inputId: "nova",
-                state: false
+                inputId: 'nova',
+                state: false,
             });
         }
-    }
+    };
     document.onmousedown = function (event) {
         socket.emit('keyPress', {
-            inputId: "attack",
-            state: true
+            inputId: 'attack',
+            state: true,
         });
-    }
+    };
     document.onmouseup = function (event) {
         socket.emit('keyPress', {
-            inputId: "attack",
-            state: false
+            inputId: 'attack',
+            state: false,
         });
-    }
+    };
     document.onmousemove = function (event) {
         var x = -WIDTH / 2 + event.clientX - 8;
         var y = -HEIGHT / 2 + event.clientY - 8;
         var angle = Math.atan2(y, x) / Math.PI * 180;
         socket.emit('keyPress', {
-            inputId: "mouseAngle",
-            state: angle
+            inputId: 'mouseAngle',
+            state: angle,
         });
-    }
+    };
 });
