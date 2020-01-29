@@ -1,5 +1,5 @@
 $(document).ready(() => {
-    var socket = io('http://be.backend-mmo.app.localspace:8887/');
+    var socket = io('ws://be.backend-mmo.app.localspace:8887');
     // var socket = io('http://localhost:8888');
     // logging
     console.log({ socket });
