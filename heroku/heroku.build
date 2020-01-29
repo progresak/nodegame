@@ -16,8 +16,8 @@ fi
 
   if [ "$BUILD_ENV" = "server" ]; then
     yarn workspace server build
-  elif [ "$BUILD_ENV" = "client" ]; then
-    yarn workspace client build
+  elif [ "$BUILD_ENV" = "frontend" ]; then
+    yarn workspace frontend build
   else
     echo "Error: no build config for INATO_BUILD_ENV value '$INATO_BUILD_ENV'"
     exit 1
