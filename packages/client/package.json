@@ -16,7 +16,6 @@
   },
   "dependencies": {
     "@material-ui/core": "^4.9.0",
-    "@nodegame/ui": "1.0.0",
     "@types/react": "^16.9.19",
     "@types/react-dom": "^16.9.5",
     "@types/styled-components": "^4.4.2",
