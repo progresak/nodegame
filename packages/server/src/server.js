@@ -10,7 +10,8 @@ app.get('/*', (req, res) => res.send('Server without render'));
 // app.use(express.static(__dirname + '/../client'));
 
 // eslint-disable-next-line no-undef
-const port = process.env.PORT || 8888;
+// const port = process.env.PORT || 8888;
+const port = 8887;
 const ip = process.env.IP || '127.0.0.1';
 
 server.listen(port, () => {

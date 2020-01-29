@@ -1,15 +1,15 @@
-$(document).ready(function () {
-    var socket = io('https://backend-mmo.herokuapp.com/');
+$(document).ready(() => {
+    var socket = io('http://be.backend-mmo.app.localspace:8887/');
     // var socket = io('http://localhost:8888');
-    //logging
-    console.log("sdf");
-    var gameDiv = $("#gameDiv");
-    var signDiv = $("#signDiv");
-    var signDivUsername = $("#signDiv-username");
-    var signDivPassword = $("#signDiv-password").hide();
-    var signDivSignUp = $("#signDiv-up").hide();
-    ;
-    var signDivSignIn = $("#signDiv-in")
+    // logging
+    console.log({ socket });
+    var gameDiv = $('#gameDiv');
+    var signDiv = $('#signDiv');
+    var signDivUsername = $('#signDiv-username');
+    var signDivPassword = $('#signDiv-password').hide();
+    var signDivSignUp = $('#signDiv-up').hide();
+
+    var signDivSignIn = $('#signDiv-in');
     signDivUsername.focus();
 
     var chatText = $('#chat-text');
