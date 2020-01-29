@@ -13,7 +13,7 @@
     "start-ts": "ts-node-dev --respawn --transpileOnly ./src/index.ts",
     "start": "node ./src/index.js",
     "prod": "tsc && node ./build/app.js",
-    "heroku-postbuild": "yarn prod"
+    "heroku-postbuild": "yarn start"
   },
   "repository": {
     "type": "git",
