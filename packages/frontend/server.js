@@ -10,8 +10,11 @@ app.use(express.static(__dirname));
 app.use(express.static(path.join(__dirname, 'dist')));
 app.get('/ping', (req, res) => res.send('pong'));
 
+const name = 'HEHEHEHE';
 app.get('/*', (req, res) => {
     res.sendFile(path.join(__dirname, 'old_index.html'));
+    // res.render(path.join(__dirname, 'old_index.html'), { name });
+
 });
 
 app.listen(port);
