@@ -1,20 +1,19 @@
 import React from 'react';
 import 'typeface-roboto';
-import { Container, Grid } from "@material-ui/core";
-import SignIn from "./components/views/SignIn";
+import Layout from "./Layout";
+import Playfield from "./components/Playfield";
+import Interface from "./components/Interface";
+import OldSignIn from "./components/OldSignIn";
 
 const App: React.FC = () => (
-    <Container fixed>
-        <Grid
-            container
-            direction="column"
-            justify="center"
-            alignItems="center"
-            spacing={3}
-        >
-            <SignIn />
-        </Grid>
-    </Container>
+    <Layout>
+        <OldSignIn />
+        <div id={'gameDiv'}>
+            <Playfield />
+            <Interface />
+        </div>
+    </Layout>
+
 );
 
 export default App;
