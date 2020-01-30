@@ -1,5 +1,6 @@
 $(document).ready(() => {
-    var socket = io('https://backend-mmo.herokuapp.com/');
+    // var socket = io('https://backend-mmo.herokuapp.com/');
+    var socket = io('http://localhost:8888');
     // logging
     console.log({ socket });
     var gameDiv = $('#gameDiv');
@@ -377,7 +378,7 @@ $(document).ready(() => {
         }
         chatInput.val('');
     });
-
+    let attackActive = false;
     document.onkeydown = function (event) {
         if (!chatForm.is(':visible')) {
             if (event.keyCode === 68) { // d
@@ -405,6 +406,7 @@ $(document).ready(() => {
                 });
             }
             if (event.keyCode === 32) { // spacebar
+                attackActive = true;
                 socket.emit('keyPress', {
                     inputId: 'nova',
                     state: true,
@@ -449,19 +451,23 @@ $(document).ready(() => {
             });
         }
         if (event.keyCode === 32) { // spacebar
+            attackActive = false;
             socket.emit('keyPress', {
                 inputId: 'nova',
                 state: false,
             });
         }
     };
+
     document.onmousedown = function (event) {
+        attackActive = true;
         socket.emit('keyPress', {
             inputId: 'attack',
             state: true,
         });
     };
     document.onmouseup = function (event) {
+        attackActive = false;
         socket.emit('keyPress', {
             inputId: 'attack',
             state: false,
@@ -471,9 +477,11 @@ $(document).ready(() => {
         var x = -WIDTH / 2 + event.clientX - 8;
         var y = -HEIGHT / 2 + event.clientY - 8;
         var angle = Math.atan2(y, x) / Math.PI * 180;
-        socket.emit('keyPress', {
-            inputId: 'mouseAngle',
-            state: angle,
-        });
+        if (attackActive) {
+            socket.emit('keyPress', {
+                inputId: 'mouseAngle',
+                state: angle,
+            });
+        }
     };
 });

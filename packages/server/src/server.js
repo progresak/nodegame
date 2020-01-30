@@ -70,7 +70,7 @@ const Player = function (param) {
         }
 
         if (self.pressingNova) {
-            for (let i = 0; i < 360; i += 180) {
+            for (let i = 0; i < 360; i += 60) {
                 self.shootBullet(self.mouseAngle + i);
             }
         }
@@ -264,8 +264,8 @@ const Bullet = function (param) {
     const self = Entity(param);
     self.id = Math.random();
     self.angle = param.angle;
-    self.speedX = Math.cos(param.angle / 180 * Math.PI) * 16;
-    self.speedY = Math.sin(param.angle / 180 * Math.PI) * 16;
+    self.speedX = Math.cos(param.angle / 180 * Math.PI) * ((Math.random() * 15)+3);
+    self.speedY = Math.sin(param.angle / 180 * Math.PI) * ((Math.random() * 15)+3);
     self.parent = param.parent;
     self.timer = 0;
     self.maxSpeed = 100;
