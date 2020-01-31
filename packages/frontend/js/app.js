@@ -1,6 +1,7 @@
 $(document).ready(() => {
     // var socket = io('https://backend-mmo.herokuapp.com/');
     var socket = io('http://localhost:8888');
+    console.log('jjj',{socket});
     // logging
     console.log({ socket });
     var gameDiv = $('#gameDiv');
