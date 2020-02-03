@@ -262,17 +262,19 @@ Player.update = function () {
 
 const Bullet = function (param) {
     const self = Entity(param);
+    const randomSpeed = ((Math.random() * 15) + 3);
     self.id = Math.random();
     self.angle = param.angle;
-    self.speedX = Math.cos(param.angle / 180 * Math.PI) * ((Math.random() * 15)+3);
-    self.speedY = Math.sin(param.angle / 180 * Math.PI) * ((Math.random() * 15)+3);
+    self.speedX = Math.cos(param.angle / 180 * Math.PI) * (randomSpeed + (Math.random() * 3));
+    self.speedY = Math.sin(param.angle / 180 * Math.PI) * (randomSpeed + (Math.random() * 3));
     self.parent = param.parent;
     self.timer = 0;
     self.maxSpeed = 100;
     self.toRemove = false;
     const super_update = self.update;
+    const randomRange = ((Math.random() * 30) + 30);
     self.update = function () {
-        if (self.timer++ > 30) {
+        if (self.timer++ > randomRange) {
             self.toRemove = true;
         }
         super_update();
