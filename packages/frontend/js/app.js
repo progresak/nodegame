@@ -1,32 +1,24 @@
+// const socket = io('http://localhost:8888');
+const socket = io('https://backend-mmo.herokuapp.com/');
 $(document).ready(() => {
-    // var socket = io('https://backend-mmo.herokuapp.com/');
-    var socket = io('http://localhost:8888');
-    console.log('jjj',{socket});
-    // logging
-    console.log({ socket });
-    var gameDiv = $('#gameDiv');
-    var signDiv = $('#signDiv');
-    var signDivUsername = $('#signDiv-username');
-    var signDivPassword = $('#signDiv-password').hide();
-    var signDivSignUp = $('#signDiv-up').hide();
+    const gameDiv = $('#gameDiv');
+    const signDiv = $('#signDiv');
+    const signDivUsername = $('#signDiv-username');
+    const signDivPassword = $('#signDiv-password').hide();
+    const signDivSignUp = $('#signDiv-up').hide();
 
-    var signDivSignIn = $('#signDiv-in');
     signDivUsername.focus();
 
-    var chatText = $('#chat-text');
-    var chatForm = $('#chat-form');
-    var chatFormLabel = $('#chat-form label');
-    var chatInput = $('#chat-input');
+    const chatText = $('#chat-text');
+    const chatForm = $('#chat-form');
+    const chatFormLabel = $('#chat-form label');
+    const chatInput = $('#chat-input');
     // scroll to bottom
 
     // /////////////////////////////////////
     /* PREPARED FOR MAGIC CAMERA */
 
     // /////////////////////////////////////
-
-    $('#chat').draggable({
-        containment: 'parent',
-    });
 
     function updateScroll(el) {
         el.scrollTop = el.scrollHeight;
@@ -36,19 +28,6 @@ $(document).ready(() => {
     function scrollAtBottom(el) {
         return (el.scrollTop + 5 >= (el.scrollHeight - el.offsetHeight));
     }
-
-    $('#signForm').submit(e => {
-        e.preventDefault();
-        console.log('sdf');
-        if (!signDivUsername.val()) {
-            return;
-        }
-        $('body').addClass('game');
-        socket.emit('signIn', {
-            username: signDivUsername.val(),
-            password: signDivPassword.val(),
-        });
-    });
 
     $('#changeMap').click(() => {
         changeMap();
@@ -61,8 +40,8 @@ $(document).ready(() => {
         });
     });
 
-    var area = $('#message-area');
-    socket.on('signInResponse', data => {
+    const area = $('#message-area');
+    socket.on('signInResponse', (data) => {
         if (data.success) {
             signDiv.hide();
             gameDiv.show();
@@ -70,7 +49,7 @@ $(document).ready(() => {
             area.html('Neplatné přihlášení');
         }
     });
-    socket.on('signUpResponse', data => {
+    socket.on('signUpResponse', (data) => {
         if (data.success) {
             area.html('Registrace proběhla úspěšně');
         } else {
@@ -79,7 +58,7 @@ $(document).ready(() => {
     });
     // Game
 
-    var Img = {};
+    const Img = {};
     Img.player = new Image();
     Img.player.src = './img/avatar.png';
     Img.bulletEnemy = new Image();
@@ -92,11 +71,11 @@ $(document).ready(() => {
     Img.map.field = new Image();
     Img.map.field.src = './img/field.jpg';
 
-    var ctx = document.getElementById('ctx').getContext('2d');
-    var ctxUi = document.getElementById('ctx-ui').getContext('2d');
-    var WIDTH;
-    var HEIGHT;
-    var setDimension = function (w, h) {
+    const ctx = document.getElementById('ctx').getContext('2d');
+    const ctxUi = document.getElementById('ctx-ui').getContext('2d');
+    let WIDTH;
+    let HEIGHT;
+    const setDimension = function (w, h) {
         w -= 20;
         h -= 20;
         WIDTH = w;
@@ -108,13 +87,13 @@ $(document).ready(() => {
         $('#ui').width(w);
         $('#ui').height(h);
     };
-    var w = $(window).width();
-    var h = $(window).height();
+    const w = $(window).width();
+    const h = $(window).height();
     setDimension(w, h);
 
     $(window).resize(function () {
-        var w = $(this).width();
-        var h = $(this).height();
+        const w = $(this).width();
+        const h = $(this).height();
         setDimension(w, h);
         socket.emit('setCanvas', {
             width: w,
@@ -123,7 +102,7 @@ $(document).ready(() => {
     });
 
     var Player = function (initPack) {
-        var self = {};
+        const self = {};
         self.id = initPack.id;
         self.number = initPack.number;
         self.x = initPack.x;
@@ -138,9 +117,9 @@ $(document).ready(() => {
             if (Player.list[selfId].map !== self.map) {
                 return;
             }
-            var x = self.x - Player.list[selfId].x + WIDTH / 2;
-            var y = self.y - Player.list[selfId].y + HEIGHT / 2;
-            var hpWidth = 70 * self.hp / self.hpMax;
+            const x = self.x - Player.list[selfId].x + WIDTH / 2;
+            const y = self.y - Player.list[selfId].y + HEIGHT / 2;
+            const hpWidth = 70 * self.hp / self.hpMax;
 
             ctxUi.fillStyle = 'white';
             ctxUi.font = '16px Arial';
@@ -156,8 +135,8 @@ $(document).ready(() => {
             ctxUi.fillText(self.hp, x, y - 28);
             ctx.fillRect(x - hpWidth / 2, y - 38, hpWidth, 11);
 
-            var height = Img.player.width;
-            var width = Img.player.height;
+            const height = Img.player.width;
+            const width = Img.player.height;
 
             ctx.drawImage(Img.player,
                 0, 0, Img.player.width, Img.player.height,
@@ -175,7 +154,7 @@ $(document).ready(() => {
     }
 
     var Bullet = function (initPack) {
-        var self = {};
+        const self = {};
         self.id = initPack.id;
         self.x = initPack.x;
         self.y = initPack.y;
@@ -191,11 +170,11 @@ $(document).ready(() => {
             if (Player.list[selfId].map !== self.map) {
                 return;
             }
-            var { width } = Img.bullet;
-            var { height } = Img.bullet;
+            const { width } = Img.bullet;
+            const { height } = Img.bullet;
 
-            var x = self.x - Player.list[selfId].x + WIDTH / 2;
-            var y = self.y - Player.list[selfId].y + HEIGHT / 2;
+            const x = self.x - Player.list[selfId].x + WIDTH / 2;
+            const y = self.y - Player.list[selfId].y + HEIGHT / 2;
             ctx.drawImage(self.img, 0, 0, self.img.width, self.img.height,
                 x - width / 2, y - height / 2, width, height);
         };
@@ -206,7 +185,7 @@ $(document).ready(() => {
     Bullet.list = {};
 
     var selfId = null;
-    socket.on('init', data => {
+    socket.on('init', (data) => {
         if (data.selfId) {
             selfId = data.selfId;
         }
@@ -219,11 +198,11 @@ $(document).ready(() => {
         }
     });
 
-    socket.on('update', data => {
+    socket.on('update', (data) => {
         // { player : [{id:123,x:0,y:0},{id:1,x:0,y:0}], bullet: []}
         for (var i = 0; i < data.player.length; i++) {
             var pack = data.player[i];
-            var p = Player.list[pack.id];
+            const p = Player.list[pack.id];
             if (p) {
                 if (pack.x !== undefined) { p.x = pack.x; }
                 if (pack.y !== undefined) { p.y = pack.y; }
@@ -231,12 +210,12 @@ $(document).ready(() => {
                 if (pack.score !== undefined) { p.score = pack.score; }
                 if (pack.map !== undefined) { p.map = pack.map; }
 
-                $('#position span').html('[' + p.x + ', ' + p.y + ']');
+                $('#position span').html(`[${p.x}, ${p.y}]`);
             }
         }
         for (var i = 0; i < data.bullet.length; i++) {
             var pack = data.bullet[i];
-            var b = Bullet.list[data.bullet[i].id];
+            const b = Bullet.list[data.bullet[i].id];
             if (b) {
                 if (pack.x !== undefined) { b.x = pack.x; }
                 if (pack.y !== undefined) { b.y = pack.y; }
@@ -244,7 +223,7 @@ $(document).ready(() => {
         }
     });
 
-    socket.on('remove', data => {
+    socket.on('remove', (data) => {
         // {player:[12323],bullet:[12323,123123]}
         for (var i = 0; i < data.player.length; i++) {
             delete Player.list[data.player[i]];
@@ -273,7 +252,7 @@ $(document).ready(() => {
     //       ctx.fill();
     //     }
 
-    var render = function () {
+    const render = function () {
         if (!selfId) {
             return;
         }
@@ -312,9 +291,9 @@ $(document).ready(() => {
     var bgImage = new Image();
     bgImage.src = './img/escheresque_ste.png';
     var drawMap = function () {
-        var player = Player.list[selfId];
-        var x = WIDTH / 2 - player.x;
-        var y = HEIGHT / 2 - player.y;
+        const player = Player.list[selfId];
+        const x = WIDTH / 2 - player.x;
+        const y = HEIGHT / 2 - player.y;
         ctx.drawImage(Img.map[player.map], x, y);
     };
 
@@ -322,7 +301,7 @@ $(document).ready(() => {
         socket.emit('changeMap');
     };
 
-    var lastScore = null;
+    const lastScore = null;
     var drawScore = function () {
         if (lastScore === Player.list[selfId].score) {
             return;
@@ -333,37 +312,37 @@ $(document).ready(() => {
         ctxUi.fillText(Player.list[selfId].score, 10, 30);
     };
 
-    socket.on('addToChat', data => {
-        var { before } = data;
-        var colored = 'colored';
+    socket.on('addToChat', (data) => {
+        let { before } = data;
+        let colored = 'colored';
         if (before === undefined) {
             before = '';
             colored = '';
         }
-        chatText.prepend('<p class="' + colored + '">' + before + ' <b class="mgsplayer">[' + data.player + ']</b>: ' + data.msg + '</p>');
+        chatText.prepend(`<p class="${colored}">${before} <b class="mgsplayer">[${data.player}]</b>: ${data.msg}</p>`);
     });
 
-    socket.on('evalAnswer', data => {
+    socket.on('evalAnswer', (data) => {
         console.log(data);
     });
 
     $(document).on('click', '.mgsplayer', function () {
-        var playername = $(this).html().slice(1, -1);
+        const playername = $(this).html().slice(1, -1);
         chatForm.show();
         chatFormLabel.html(playername);
         chatInput.focus();
     });
-    chatInput.keypress(event => {
-        var parts = chatInput.val().split(' ');
+    chatInput.keypress((event) => {
+        const parts = chatInput.val().split(' ');
         if (parts[0] == '/w' && parts.length == 2 && event.keyCode === 32) {
             chatFormLabel.html(parts[1]);
             chatInput.val('');
         }
     });
-    chatForm.submit(e => {
+    chatForm.submit((e) => {
         e.preventDefault();
-        var komu = chatFormLabel.html();
-        var parts = chatInput.val().split(' ');
+        const komu = chatFormLabel.html();
+        const parts = chatInput.val().split(' ');
         if (!chatInput.val() || (parts[0] == '/w' && parts.length == 2)) {
             chatInput.val('');
             return;
@@ -475,9 +454,9 @@ $(document).ready(() => {
         });
     };
     document.onmousemove = function (event) {
-        var x = -WIDTH / 2 + event.clientX - 8;
-        var y = -HEIGHT / 2 + event.clientY - 8;
-        var angle = Math.atan2(y, x) / Math.PI * 180;
+        const x = -WIDTH / 2 + event.clientX - 8;
+        const y = -HEIGHT / 2 + event.clientY - 8;
+        const angle = Math.atan2(y, x) / Math.PI * 180;
         if (attackActive) {
             socket.emit('keyPress', {
                 inputId: 'mouseAngle',

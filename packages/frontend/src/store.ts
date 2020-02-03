@@ -3,7 +3,6 @@ import { applyMiddleware, compose, createStore as createReduxStore } from 'redux
 import thunk from 'redux-thunk';
 import reducer from "./reducer";
 import socketMiddleware from './middlewares/socketMiddleware';
-import {SOCKET_SERVER_URL} from "./configuration";
 
 export const createStore = ({ initialState = {}, middlewares = [], enhancers = [] } = {}    ) => {
 
@@ -11,7 +10,8 @@ export const createStore = ({ initialState = {}, middlewares = [], enhancers = [
 
     const finalMiddlewares = [
         thunk,
-        socketMiddleware(SOCKET_SERVER_URL),
+        // @ts-ignore
+        socketMiddleware(socket), //TODO: Socket is taken from globalScope for now. It needs' to be removed
         ...middlewares,
     ];
 
