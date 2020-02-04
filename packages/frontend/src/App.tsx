@@ -1,9 +1,9 @@
 import React from 'react';
-import {Provider} from 'react-redux';
+import { Provider } from 'react-redux';
 import 'typeface-roboto';
 import store from './store';
-import Layout from "./Layout";
-import Content from "./Content";
+import Layout from './Layout';
+import Content from './Content';
 
 const App: React.FC = () => (
     <Provider store={store}>
@@ -11,7 +11,6 @@ const App: React.FC = () => (
             <Content />
         </Layout>
     </Provider>
-
 );
 
 export default App;

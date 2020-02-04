@@ -140,7 +140,7 @@ Player.onConnect = function (socket, data) {
     for (const i in SOCKET_LIST) {
         SOCKET_LIST[i].emit('addToChat', {
             player: 'Server',
-            msg: 'Hráč: [' + data.username + '] se připojil do hry',
+            message: 'Hráč: [' + data.username + '] se připojil do hry',
         });
     }
     logText('Hráč: [' + data.username + '] se připojil do hry');
@@ -194,7 +194,7 @@ Player.onConnect = function (socket, data) {
         for (const i in SOCKET_LIST) {
             SOCKET_LIST[i].emit('addToChat', {
                 player: player.username,
-                msg: data,
+                message: data,
             });
         }
     });
@@ -211,17 +211,17 @@ Player.onConnect = function (socket, data) {
         if (recipientSocket === null) {
             socket.emit('addToChat', {
                 player: 'Server',
-                msg: 'Hráč: ' + data.username + ' není online',
+                message: 'Hráč: ' + data.username + ' není online',
             });
         } else {
             recipientSocket.emit('addToChat', {
                 player: player.username,
-                msg: data.message,
+                message: data.message,
                 before: 'Od',
             });
             socket.emit('addToChat', {
                 player: data.username,
-                msg: data.message,
+                message: data.message,
                 before: 'To',
             });
         }
@@ -241,7 +241,7 @@ Player.onDisconnect = function (socket) {
         for (const i in SOCKET_LIST) {
             SOCKET_LIST[i].emit('addToChat', {
                 player: 'Server',
-                msg: 'Hráč: [' + Player.list[socket.id].username + '] se odpojil ze hry',
+                message: 'Hráč: [' + Player.list[socket.id].username + '] se odpojil ze hry',
             });
         }
         logText('Hráč: [' + Player.list[socket.id].username + '] se odpojil ze hry');

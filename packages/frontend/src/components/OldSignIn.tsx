@@ -1,20 +1,26 @@
-import React, {useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import {signIn} from "../ducks/App/actions";
-import {RootState} from "../reducer";
+import { signIn } from '../ducks/App/actions';
+import { RootState } from '../reducer';
 
 interface OldSignInProps {
     signedIn: boolean;
-    signIn: (credentials: { username: string, password: string }) => void;
+    signIn: (credentials: { username: string; password: string }) => void;
 }
 
 const OldSignIn: React.FC<OldSignInProps> = ({ signedIn, signIn }) => {
+    useEffect(() => {
+        window.setTimeout(() => {
+            signIn({ username: 'Progres', password: '' });
+        }, 400);
+    }, []);
     if (signedIn) {
         return null;
     }
     const [username, setUsername] = useState('');
 
-    const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => setUsername(e.currentTarget.value);
+    const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+        setUsername(e.currentTarget.value);
 
     const onFormSubmit = (e: React.FormEvent) => {
         console.log(typeof e);
@@ -22,15 +28,22 @@ const OldSignIn: React.FC<OldSignInProps> = ({ signedIn, signIn }) => {
         signIn({ username, password: '' });
     };
 
-    return(
+    return (
         <div id="signDiv">
             <h2>MMO Progres Fight</h2>
             <form id="signForm" onSubmit={onFormSubmit}>
-                <label htmlFor="signDiv-username">
-                    Nick:
-                </label>
-                <input onChange={handleUsernameChange} className="form-control" id="signDiv-username" />
-                <input type="submit" className="btn btn-success" id="signDiv-in" value="Přihlásit" />
+                <label htmlFor="signDiv-username">Nick:</label>
+                <input
+                    onChange={handleUsernameChange}
+                    className="form-control"
+                    id="signDiv-username"
+                />
+                <input
+                    type="submit"
+                    className="btn btn-success"
+                    id="signDiv-in"
+                    value="Přihlásit"
+                />
             </form>
 
             <span className="color-info" id="message-area" />
@@ -40,17 +53,18 @@ const OldSignIn: React.FC<OldSignInProps> = ({ signedIn, signIn }) => {
 
 const mapStateToProps = (state: RootState) => {
     return {
-        signedIn: state.app.authenticated,
-    }
+        signedIn: state.app.authenticated
+    };
 };
 
 interface StateProps {
-    signedIn: boolean
+    signedIn: boolean;
 }
 
 interface DispatchProps {
-    signIn: (credentials: { username: string, password: string }) => void;
+    signIn: (credentials: { username: string; password: string }) => void;
 }
 
-
-export default connect<StateProps, DispatchProps, {}, RootState>(mapStateToProps, { signIn })(OldSignIn);
+export default connect<StateProps, DispatchProps, {}, RootState>(mapStateToProps, { signIn })(
+    OldSignIn
+);

@@ -11,13 +11,6 @@ body.game {
 
     background-repeat: repeat;
 }
-#chatdiv p.colored,
-#chatdiv p.colored b {
-    color: #f442f4;
-}
-#chat-text p {
-    margin: 2px;
-}
 #message-area {
     color: red;
     font-weight: bold;
@@ -81,18 +74,6 @@ body.game {
     overflow-y: overlay;
     max-height: 200px;
     min-height: 150px;
-}
-.chat-window {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
-.chat-messages {
-    flex: 1;
-    height: 100%;
-    overflow: auto;
-    display: flex;
-    flex-direction: column-reverse;
 }
 #chatdiv p b {
     color: yellow;

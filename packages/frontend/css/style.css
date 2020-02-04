@@ -49,55 +49,6 @@ body.game {
 #position span {
     color: white;
 }
-#chat-form {
-    width: 100%;
-    background: black;
-    float: left;
-    bottom: 0px;
-    border-radius: 5px;
-    display: none;
-    /*margin-top: 15px;
-    position: absolute;
-    bottom: 0px;*/
-
-    width: 400px;
-}
-#chat-form label {
-    color: white;
-    float: left;
-    margin: 5px;
-}
-#chat-input {
-    background: black;
-    width: 80%;
-    border: none!important;
-    color: white;
-    padding: 5px;
-    border: 1px solid grey;
-    border-radius: 5px;
-    float: left;
-}
-#chat-text {
-    overflow-y: overlay;
-    max-height: 200px;
-    min-height: 150px;
-}
-.chat-window {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
-.chat-messages {
-    flex: 1;
-    height: 100%;
-    overflow: auto;
-    display: flex;
-    flex-direction: column-reverse;
-}
-#chatdiv p b {
-    color: yellow;
-    cursor: pointer;
-}
 #gameDiv {
     display: none;
 }

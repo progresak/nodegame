@@ -1,5 +1,6 @@
-// const socket = io('http://localhost:8888');
-const socket = io('https://backend-mmo.herokuapp.com/');
+const socket = io('http://localhost:8888');
+window.socket = socket;
+// const socket = io('https://backend-mmo.herokuapp.com/');
 $(document).ready(() => {
     const gameDiv = $('#gameDiv');
     const signDiv = $('#signDiv');
@@ -16,18 +17,8 @@ $(document).ready(() => {
     // scroll to bottom
 
     // /////////////////////////////////////
-    /* PREPARED FOR MAGIC CAMERA */
-
+    // * PREPARED FOR MAGIC CAMERA * //
     // /////////////////////////////////////
-
-    function updateScroll(el) {
-        el.scrollTop = el.scrollHeight;
-    }
-
-    // only shift-up if at bottom
-    function scrollAtBottom(el) {
-        return (el.scrollTop + 5 >= (el.scrollHeight - el.offsetHeight));
-    }
 
     $('#changeMap').click(() => {
         changeMap();
@@ -312,52 +303,13 @@ $(document).ready(() => {
         ctxUi.fillText(Player.list[selfId].score, 10, 30);
     };
 
-    socket.on('addToChat', (data) => {
-        let { before } = data;
-        let colored = 'colored';
-        if (before === undefined) {
-            before = '';
-            colored = '';
-        }
-        chatText.prepend(`<p class="${colored}">${before} <b class="mgsplayer">[${data.player}]</b>: ${data.msg}</p>`);
-    });
-
-    socket.on('evalAnswer', (data) => {
-        console.log(data);
-    });
-
     $(document).on('click', '.mgsplayer', function () {
         const playername = $(this).html().slice(1, -1);
         chatForm.show();
         chatFormLabel.html(playername);
         chatInput.focus();
     });
-    chatInput.keypress((event) => {
-        const parts = chatInput.val().split(' ');
-        if (parts[0] == '/w' && parts.length == 2 && event.keyCode === 32) {
-            chatFormLabel.html(parts[1]);
-            chatInput.val('');
-        }
-    });
-    chatForm.submit((e) => {
-        e.preventDefault();
-        const komu = chatFormLabel.html();
-        const parts = chatInput.val().split(' ');
-        if (!chatInput.val() || (parts[0] == '/w' && parts.length == 2)) {
-            chatInput.val('');
-            return;
-        }
-        if (komu === 'Všem') {
-            socket.emit('sendMsgToServer', chatInput.val());
-        } else {
-            socket.emit('sendPmToServer', {
-                username: komu,
-                message: chatInput.val(),
-            });
-            chatFormLabel.html('Všem');
-        }
-        chatInput.val('');
-    });
+
     let attackActive = false;
     document.onkeydown = function (event) {
         if (!chatForm.is(':visible')) {
@@ -396,12 +348,6 @@ $(document).ready(() => {
             chatInput.focusout(function () {
                 this.focus();
             });
-        }
-        if (event.keyCode === 13) { // enter
-            if (!signDiv.is(':visible')) {
-                chatForm.toggle();
-                chatInput.focus();
-            }
         }
     };
 
