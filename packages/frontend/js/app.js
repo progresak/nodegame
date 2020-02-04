@@ -1,6 +1,7 @@
-const socket = io('http://localhost:8888');
+// const socket = io('http://localhost:8888');
+const socket = io('https://backend-mmo.herokuapp.com/');
 window.socket = socket;
-// const socket = io('https://backend-mmo.herokuapp.com/');
+
 $(document).ready(() => {
     const gameDiv = $('#gameDiv');
     const signDiv = $('#signDiv');
@@ -27,12 +28,12 @@ $(document).ready(() => {
     signDivSignUp.click(() => {
         socket.emit('signUp', {
             username: signDivUsername.val(),
-            password: signDivPassword.val(),
+            password: signDivPassword.val()
         });
     });
 
     const area = $('#message-area');
-    socket.on('signInResponse', (data) => {
+    socket.on('signInResponse', data => {
         if (data.success) {
             signDiv.hide();
             gameDiv.show();
@@ -40,7 +41,7 @@ $(document).ready(() => {
             area.html('Neplatné přihlášení');
         }
     });
-    socket.on('signUpResponse', (data) => {
+    socket.on('signUpResponse', data => {
         if (data.success) {
             area.html('Registrace proběhla úspěšně');
         } else {
@@ -66,7 +67,7 @@ $(document).ready(() => {
     const ctxUi = document.getElementById('ctx-ui').getContext('2d');
     let WIDTH;
     let HEIGHT;
-    const setDimension = function (w, h) {
+    const setDimension = function(w, h) {
         w -= 20;
         h -= 20;
         WIDTH = w;
@@ -82,17 +83,17 @@ $(document).ready(() => {
     const h = $(window).height();
     setDimension(w, h);
 
-    $(window).resize(function () {
+    $(window).resize(function() {
         const w = $(this).width();
         const h = $(this).height();
         setDimension(w, h);
         socket.emit('setCanvas', {
             width: w,
-            height: h,
+            height: h
         });
     });
 
-    var Player = function (initPack) {
+    var Player = function(initPack) {
         const self = {};
         self.id = initPack.id;
         self.number = initPack.number;
@@ -104,13 +105,13 @@ $(document).ready(() => {
         self.map = initPack.map;
         self.username = initPack.username;
 
-        self.draw = function () {
+        self.draw = function() {
             if (Player.list[selfId].map !== self.map) {
                 return;
             }
             const x = self.x - Player.list[selfId].x + WIDTH / 2;
             const y = self.y - Player.list[selfId].y + HEIGHT / 2;
-            const hpWidth = 70 * self.hp / self.hpMax;
+            const hpWidth = (70 * self.hp) / self.hpMax;
 
             ctxUi.fillStyle = 'white';
             ctxUi.font = '16px Arial';
@@ -129,9 +130,17 @@ $(document).ready(() => {
             const height = Img.player.width;
             const width = Img.player.height;
 
-            ctx.drawImage(Img.player,
-                0, 0, Img.player.width, Img.player.height,
-                x - width / 2, y - height / 2, width, height);
+            ctx.drawImage(
+                Img.player,
+                0,
+                0,
+                Img.player.width,
+                Img.player.height,
+                x - width / 2,
+                y - height / 2,
+                width,
+                height
+            );
         };
 
         Player.list[self.id] = self;
@@ -141,10 +150,15 @@ $(document).ready(() => {
 
     function drawBorder(canvas, xPos, yPos, width, height, thickness = 1) {
         canvas.fillStyle = '#000';
-        canvas.fillRect(xPos - (thickness), yPos - (thickness), width + (thickness * 2), height + (thickness * 2));
+        canvas.fillRect(
+            xPos - thickness,
+            yPos - thickness,
+            width + thickness * 2,
+            height + thickness * 2
+        );
     }
 
-    var Bullet = function (initPack) {
+    var Bullet = function(initPack) {
         const self = {};
         self.id = initPack.id;
         self.x = initPack.x;
@@ -157,7 +171,7 @@ $(document).ready(() => {
             self.img = Img.bulletEnemy;
         }
 
-        self.draw = function () {
+        self.draw = function() {
             if (Player.list[selfId].map !== self.map) {
                 return;
             }
@@ -166,8 +180,17 @@ $(document).ready(() => {
 
             const x = self.x - Player.list[selfId].x + WIDTH / 2;
             const y = self.y - Player.list[selfId].y + HEIGHT / 2;
-            ctx.drawImage(self.img, 0, 0, self.img.width, self.img.height,
-                x - width / 2, y - height / 2, width, height);
+            ctx.drawImage(
+                self.img,
+                0,
+                0,
+                self.img.width,
+                self.img.height,
+                x - width / 2,
+                y - height / 2,
+                width,
+                height
+            );
         };
         Bullet.list[self.id] = self;
 
@@ -176,7 +199,7 @@ $(document).ready(() => {
     Bullet.list = {};
 
     var selfId = null;
-    socket.on('init', (data) => {
+    socket.on('init', data => {
         if (data.selfId) {
             selfId = data.selfId;
         }
@@ -189,17 +212,27 @@ $(document).ready(() => {
         }
     });
 
-    socket.on('update', (data) => {
+    socket.on('update', data => {
         // { player : [{id:123,x:0,y:0},{id:1,x:0,y:0}], bullet: []}
         for (var i = 0; i < data.player.length; i++) {
             var pack = data.player[i];
             const p = Player.list[pack.id];
             if (p) {
-                if (pack.x !== undefined) { p.x = pack.x; }
-                if (pack.y !== undefined) { p.y = pack.y; }
-                if (pack.hp !== undefined) { p.hp = pack.hp; }
-                if (pack.score !== undefined) { p.score = pack.score; }
-                if (pack.map !== undefined) { p.map = pack.map; }
+                if (pack.x !== undefined) {
+                    p.x = pack.x;
+                }
+                if (pack.y !== undefined) {
+                    p.y = pack.y;
+                }
+                if (pack.hp !== undefined) {
+                    p.hp = pack.hp;
+                }
+                if (pack.score !== undefined) {
+                    p.score = pack.score;
+                }
+                if (pack.map !== undefined) {
+                    p.map = pack.map;
+                }
 
                 $('#position span').html(`[${p.x}, ${p.y}]`);
             }
@@ -208,13 +241,17 @@ $(document).ready(() => {
             var pack = data.bullet[i];
             const b = Bullet.list[data.bullet[i].id];
             if (b) {
-                if (pack.x !== undefined) { b.x = pack.x; }
-                if (pack.y !== undefined) { b.y = pack.y; }
+                if (pack.x !== undefined) {
+                    b.x = pack.x;
+                }
+                if (pack.y !== undefined) {
+                    b.y = pack.y;
+                }
             }
         }
     });
 
-    socket.on('remove', (data) => {
+    socket.on('remove', data => {
         // {player:[12323],bullet:[12323,123123]}
         for (var i = 0; i < data.player.length; i++) {
             delete Player.list[data.player[i]];
@@ -243,7 +280,7 @@ $(document).ready(() => {
     //       ctx.fill();
     //     }
 
-    const render = function () {
+    const render = function() {
         if (!selfId) {
             return;
         }
@@ -281,19 +318,19 @@ $(document).ready(() => {
 
     var bgImage = new Image();
     bgImage.src = './img/escheresque_ste.png';
-    var drawMap = function () {
+    var drawMap = function() {
         const player = Player.list[selfId];
         const x = WIDTH / 2 - player.x;
         const y = HEIGHT / 2 - player.y;
         ctx.drawImage(Img.map[player.map], x, y);
     };
 
-    var changeMap = function () {
+    var changeMap = function() {
         socket.emit('changeMap');
     };
 
     const lastScore = null;
-    var drawScore = function () {
+    var drawScore = function() {
         if (lastScore === Player.list[selfId].score) {
             return;
         }
@@ -303,110 +340,122 @@ $(document).ready(() => {
         ctxUi.fillText(Player.list[selfId].score, 10, 30);
     };
 
-    $(document).on('click', '.mgsplayer', function () {
-        const playername = $(this).html().slice(1, -1);
+    $(document).on('click', '.mgsplayer', function() {
+        const playername = $(this)
+            .html()
+            .slice(1, -1);
         chatForm.show();
         chatFormLabel.html(playername);
         chatInput.focus();
     });
 
     let attackActive = false;
-    document.onkeydown = function (event) {
+    document.onkeydown = function(event) {
         if (!chatForm.is(':visible')) {
-            if (event.keyCode === 68) { // d
+            if (event.keyCode === 68) {
+                // d
                 socket.emit('keyPress', {
                     inputId: 'right',
-                    state: true,
+                    state: true
                 });
             }
-            if (event.keyCode === 83) { // s
+            if (event.keyCode === 83) {
+                // s
                 socket.emit('keyPress', {
                     inputId: 'down',
-                    state: true,
+                    state: true
                 });
             }
-            if (event.keyCode === 65) { // a
+            if (event.keyCode === 65) {
+                // a
                 socket.emit('keyPress', {
                     inputId: 'left',
-                    state: true,
+                    state: true
                 });
             }
-            if (event.keyCode === 87) { // w
+            if (event.keyCode === 87) {
+                // w
                 socket.emit('keyPress', {
                     inputId: 'up',
-                    state: true,
+                    state: true
                 });
             }
-            if (event.keyCode === 32) { // spacebar
+            if (event.keyCode === 32) {
+                // spacebar
                 attackActive = true;
                 socket.emit('keyPress', {
                     inputId: 'nova',
-                    state: true,
+                    state: true
                 });
             }
         } else {
-            chatInput.focusout(function () {
+            chatInput.focusout(function() {
                 this.focus();
             });
         }
     };
 
-    document.onkeyup = function (event) {
-        if (event.keyCode === 68) { // d
+    document.onkeyup = function(event) {
+        if (event.keyCode === 68) {
+            // d
             socket.emit('keyPress', {
                 inputId: 'right',
-                state: false,
+                state: false
             });
         }
-        if (event.keyCode === 83) { // s
+        if (event.keyCode === 83) {
+            // s
             socket.emit('keyPress', {
                 inputId: 'down',
-                state: false,
+                state: false
             });
         }
-        if (event.keyCode === 65) { // a
+        if (event.keyCode === 65) {
+            // a
             socket.emit('keyPress', {
                 inputId: 'left',
-                state: false,
+                state: false
             });
         }
-        if (event.keyCode === 87) { // w
+        if (event.keyCode === 87) {
+            // w
             socket.emit('keyPress', {
                 inputId: 'up',
-                state: false,
+                state: false
             });
         }
-        if (event.keyCode === 32) { // spacebar
+        if (event.keyCode === 32) {
+            // spacebar
             attackActive = false;
             socket.emit('keyPress', {
                 inputId: 'nova',
-                state: false,
+                state: false
             });
         }
     };
 
-    document.onmousedown = function (event) {
+    document.onmousedown = function(event) {
         attackActive = true;
         socket.emit('keyPress', {
             inputId: 'attack',
-            state: true,
+            state: true
         });
     };
-    document.onmouseup = function (event) {
+    document.onmouseup = function(event) {
         attackActive = false;
         socket.emit('keyPress', {
             inputId: 'attack',
-            state: false,
+            state: false
         });
     };
-    document.onmousemove = function (event) {
+    document.onmousemove = function(event) {
         const x = -WIDTH / 2 + event.clientX - 8;
         const y = -HEIGHT / 2 + event.clientY - 8;
-        const angle = Math.atan2(y, x) / Math.PI * 180;
+        const angle = (Math.atan2(y, x) / Math.PI) * 180;
         if (attackActive) {
             socket.emit('keyPress', {
                 inputId: 'mouseAngle',
-                state: angle,
+                state: angle
             });
         }
     };
