@@ -12,7 +12,7 @@
   "author": "Lukáš Kratochvíl <kratochvil.lukas9@gmail.com>",
   "license": "MIT",
   "engines": {
-    "node": "12.x.x",
-    "yarn": "1.15.x"
+    "node": "13.x.x",
+    "yarn": "1.x.x"
   }
 }
