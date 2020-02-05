@@ -1,5 +1,4 @@
 import React from 'react';
-import 'typeface-roboto';
 import Playfield from './components/Playfield';
 import Interface from './components/Interface';
 import OldSignIn from './components/OldSignIn';

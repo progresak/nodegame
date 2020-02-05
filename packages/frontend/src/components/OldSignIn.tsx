@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { signIn } from '../ducks/App/actions';
 import { RootState } from '../reducer';
+import styled from 'styled-components';
 
 interface OldSignInProps {
     signedIn: boolean;
@@ -23,13 +24,12 @@ const OldSignIn: React.FC<OldSignInProps> = ({ signedIn, signIn }) => {
         setUsername(e.currentTarget.value);
 
     const onFormSubmit = (e: React.FormEvent) => {
-        console.log(typeof e);
-        e.preventDefault();
         signIn({ username, password: '' });
+        e.preventDefault();
     };
 
     return (
-        <div id="signDiv">
+        <SignInWrapper id="signDiv">
             <h2>MMO Progres Fight</h2>
             <form id="signForm" onSubmit={onFormSubmit}>
                 <label htmlFor="signDiv-username">Nick:</label>
@@ -47,9 +47,24 @@ const OldSignIn: React.FC<OldSignInProps> = ({ signedIn, signIn }) => {
             </form>
 
             <span className="color-info" id="message-area" />
-        </div>
+        </SignInWrapper>
     );
 };
+
+const SignInWrapper = styled.div`
+    width: 400px;
+    min-height: 200px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-left: -200px;
+    margin-top: -150px;
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 10px 20px;
+    background: #333;
+    color: #eee;
+`;
 
 const mapStateToProps = (state: RootState) => {
     return {

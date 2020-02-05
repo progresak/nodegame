@@ -6,7 +6,8 @@ import {
     ChatWrapperElement,
     MessageLine,
     MessagesContent,
-    MessagesWrapper
+    MessagesWrapper,
+    MessagePlayerName
 } from './styles';
 import { Message } from '../../ducks/App/reducer';
 
@@ -24,17 +25,14 @@ const Chat: React.FC<ChatProps> = ({
     addMessage,
     messages
 }) => {
-    const [chat, updateChat] = useState({
-        target: FOR_ALL,
-        active: false
-    });
+    const [active, updateActive] = useState(false);
+    const [target, updateTarget] = useState(FOR_ALL);
     const [message, updateMessage] = useState('');
-    const { active, target } = chat;
     const inputElement = useRef<HTMLInputElement>(null);
 
     const enterCallback = (event: KeyboardEvent) => {
         if (event.code === 'Enter') {
-            updateChat({ ...chat, active: !active });
+            updateActive(!active);
         }
     };
 
@@ -53,12 +51,10 @@ const Chat: React.FC<ChatProps> = ({
     const handleMessageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const parts = message.split(' ');
         updateMessage(e.currentTarget.value);
-        if (parts[0] === '/w' && parts.length === 2) {
-            updateChat({ ...chat, target: parts[1] });
+        if (parts[0] === '/w' && parts.length === 3) {
+            updateTarget(parts[1]);
             updateMessage('');
         }
-
-        updateChat({ ...chat, target: FOR_ALL });
     };
 
     const onFormSubmit = (e: React.FormEvent) => {
@@ -68,8 +64,9 @@ const Chat: React.FC<ChatProps> = ({
             sendMessageToServer(message);
         }
         if (active) {
-            updateChat({ ...chat, active: false });
+            updateActive(false);
             updateMessage('');
+            updateTarget(FOR_ALL);
 
             if (inputElement && inputElement.current) {
                 inputElement.current.value = message;
@@ -78,25 +75,31 @@ const Chat: React.FC<ChatProps> = ({
         e.preventDefault();
     };
 
+    const handleChatToPlayer = (target: string) => {
+        updateActive(true);
+        updateTarget(target);
+    };
+
     const renderMessages = (mess: Array<Message>) =>
         mess.map(({ message, player, time }: Message) => (
             <MessageLine key={time} className="colored">
-                <strong>[{player}]</strong>:&nbsp;{message} {/*className="mgsplayer"*/}
+                <MessagePlayerName onClick={() => handleChatToPlayer(player)}>
+                    [{player}]
+                </MessagePlayerName>
+                :&nbsp;{message}
             </MessageLine>
         ));
 
     return (
-        <ChatWrapperElement id="chat">
-            <MessagesWrapper className="chat-window">
+        <ChatWrapperElement>
+            <MessagesWrapper>
                 <MessagesContent>
-                    <div id="messages">
-                        <p>Welcome on the server</p>
-                        {renderMessages(messages)}
-                    </div>
+                    <p>Welcome on the server</p>
+                    {renderMessages(messages)}
                 </MessagesContent>
             </MessagesWrapper>
             <ChatForm hidden={!active} id="chat-form" autoComplete="off" onSubmit={onFormSubmit}>
-                <ChatLabel htmlFor="chat-input">{target}</ChatLabel>
+                <ChatLabel>{target}</ChatLabel>
                 <ChatInput
                     autoFocus
                     type="text"

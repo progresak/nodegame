@@ -1,5 +1,5 @@
-// const socket = io('http://localhost:8888');
-const socket = io('https://backend-mmo.herokuapp.com/');
+const socket = io('http://localhost:8888');
+// const socket = io('https://backend-mmo.herokuapp.com/');
 window.socket = socket;
 
 $(document).ready(() => {
@@ -11,10 +11,7 @@ $(document).ready(() => {
 
     signDivUsername.focus();
 
-    const chatText = $('#chat-text');
     const chatForm = $('#chat-form');
-    const chatFormLabel = $('#chat-form label');
-    const chatInput = $('#chat-input');
     // scroll to bottom
 
     // /////////////////////////////////////
@@ -340,15 +337,6 @@ $(document).ready(() => {
         ctxUi.fillText(Player.list[selfId].score, 10, 30);
     };
 
-    $(document).on('click', '.mgsplayer', function() {
-        const playername = $(this)
-            .html()
-            .slice(1, -1);
-        chatForm.show();
-        chatFormLabel.html(playername);
-        chatInput.focus();
-    });
-
     let attackActive = false;
     document.onkeydown = function(event) {
         if (!chatForm.is(':visible')) {
@@ -377,7 +365,7 @@ $(document).ready(() => {
                 // w
                 socket.emit('keyPress', {
                     inputId: 'up',
-                    state: true
+                    state: true,
                 });
             }
             if (event.keyCode === 32) {
@@ -388,10 +376,6 @@ $(document).ready(() => {
                     state: true
                 });
             }
-        } else {
-            chatInput.focusout(function() {
-                this.focus();
-            });
         }
     };
 

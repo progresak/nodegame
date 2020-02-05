@@ -58,3 +58,8 @@ export const ChatInput = styled.input`
     border-radius: 5px;
     float: left;
 `;
+export const MessagePlayerName = styled.span`
+    font-weight: bold;
+    color: yellow;
+    cursor: pointer;
+`;
