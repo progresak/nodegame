@@ -10,11 +10,11 @@ interface OldSignInProps {
 }
 
 const OldSignIn: React.FC<OldSignInProps> = ({ signedIn, signIn }) => {
-    useEffect(() => {
-        window.setTimeout(() => {
-            signIn({ username: 'Progres', password: '' });
-        }, 400);
-    }, []);
+    // useEffect(() => {
+    //     window.setTimeout(() => {
+    //         signIn({ username: 'Progres', password: '' });
+    //     }, 400);
+    // }, []);
     if (signedIn) {
         return null;
     }
@@ -64,6 +64,7 @@ const SignInWrapper = styled.div`
     padding: 10px 20px;
     background: #333;
     color: #eee;
+    z-index: 9999;
 `;
 
 const mapStateToProps = (state: RootState) => {

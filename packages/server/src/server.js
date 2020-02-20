@@ -23,7 +23,9 @@ const DEBUG = false;
 let canvasWidth = 500;
 let canvasHeight = 500;
 
-const Entity = ({ x = 250, y = 250, map = 'wow', id = null }) => {
+const Entity = ({
+    x = 250, y = 250, map = 'wow', id = null,
+}) => {
     const self = {
         x,
         y,
@@ -45,7 +47,7 @@ const Entity = ({ x = 250, y = 250, map = 'wow', id = null }) => {
 
 const Player = function (param) {
     const self = Entity(param);
-    self.number = '' + Math.floor(10 * Math.random());
+    self.number = `${Math.floor(10 * Math.random())}`;
     self.pressingRight = false;
     self.pressingLeft = false;
     self.pressingUp = false;
@@ -140,10 +142,10 @@ Player.onConnect = function (socket, data) {
     for (const i in SOCKET_LIST) {
         SOCKET_LIST[i].emit('addToChat', {
             player: 'Server',
-            message: 'Hráč: [' + data.username + '] se připojil do hry',
+            message: `Hráč: [${data.username}] se připojil do hry`,
         });
     }
-    logText('Hráč: [' + data.username + '] se připojil do hry');
+    logText(`Hráč: [${data.username}] se připojil do hry`);
 
     const player = Player({
         id: socket.id,
@@ -151,7 +153,7 @@ Player.onConnect = function (socket, data) {
         username: data.username,
     });
 
-    socket.on('keyPress', data => {
+    socket.on('keyPress', (data) => {
         if (data.inputId === 'left') {
             player.pressingLeft = data.state;
         }
@@ -174,7 +176,7 @@ Player.onConnect = function (socket, data) {
             player.mouseAngle = data.state;
         }
     });
-    socket.on('changeMap', data => {
+    socket.on('changeMap', (data) => {
         if (player.map === 'wow') {
             player.map = 'field';
         } else {
@@ -188,9 +190,9 @@ Player.onConnect = function (socket, data) {
         bullet: Bullet.getAllInitPack(),
     });
 
-    socket.on('sendMsgToServer', data => {
+    socket.on('sendMsgToServer', (data) => {
         const p = Player.list[socket.id];
-        logText(player.username + ': ' + data);
+        logText(`${player.username}: ${data}`);
         for (const i in SOCKET_LIST) {
             SOCKET_LIST[i].emit('addToChat', {
                 player: player.username,
@@ -199,19 +201,19 @@ Player.onConnect = function (socket, data) {
         }
     });
 
-    socket.on('sendPmToServer', data => {
+    socket.on('sendPmToServer', (data) => {
         let recipientSocket = null;
         for (const i in Player.list) {
             if (Player.list[i].username === data.username) {
                 recipientSocket = SOCKET_LIST[i];
             }
         }
-        logText('Od ' + player.username + ' to ' + data.username + ': ' + data.message);
+        logText(`Od ${player.username} to ${data.username}: ${data.message}`);
 
         if (recipientSocket === null) {
             socket.emit('addToChat', {
                 player: 'Server',
-                message: 'Hráč: ' + data.username + ' není online',
+                message: `Hráč: ${data.username} není online`,
             });
         } else {
             recipientSocket.emit('addToChat', {
@@ -241,10 +243,10 @@ Player.onDisconnect = function (socket) {
         for (const i in SOCKET_LIST) {
             SOCKET_LIST[i].emit('addToChat', {
                 player: 'Server',
-                message: 'Hráč: [' + Player.list[socket.id].username + '] se odpojil ze hry',
+                message: `Hráč: [${Player.list[socket.id].username}] se odpojil ze hry`,
             });
         }
-        logText('Hráč: [' + Player.list[socket.id].username + '] se odpojil ze hry');
+        logText(`Hráč: [${Player.list[socket.id].username}] se odpojil ze hry`);
     }
     delete Player.list[socket.id];
     removePack.player.push(socket.id);
@@ -369,12 +371,13 @@ const addUser = function (data, cb) {
 
 const io = require('socket.io')(server, {});
 
-io.sockets.on('connection', socket => {
+io.sockets.on('connection', (socket) => {
     socket.id = Math.random();
     SOCKET_LIST[socket.id] = socket;
 
-    socket.on('signIn', data => {
-        isValidPassword(data, res => {
+    socket.on('signIn', (data) => {
+        isValidPassword(data, (res) => {
+            console.log({ data, res });
             if (res) {
                 Player.onConnect(socket, data);
                 socket.emit('signInResponse', {
@@ -388,8 +391,8 @@ io.sockets.on('connection', socket => {
         });
     });
 
-    socket.on('signUp', data => {
-        isUsernameTaken(data, res => {
+    socket.on('signUp', (data) => {
+        isUsernameTaken(data, (res) => {
             if (!res) {
                 addUser(data, () => {
                     socket.emit('signUpResponse', {
@@ -408,12 +411,12 @@ io.sockets.on('connection', socket => {
         delete SOCKET_LIST[socket.id];
         Player.onDisconnect(socket);
     });
-    socket.on('setCanvas', data => {
+    socket.on('setCanvas', (data) => {
         canvasWidth = data.width;
         canvasHeight = data.height;
     });
 
-    socket.on('evalServer', data => {
+    socket.on('evalServer', (data) => {
         if (!DEBUG) {
             return;
         }
@@ -450,6 +453,6 @@ setInterval(() => {
 }, 1000 / 25);
 
 const logText = function (text) {
-    fs.appendFile('logs/chat.log', '(' + new Date().toLocaleString() + '): ' + text + '\r\n', err => {
+    fs.appendFile('logs/chat.log', `(${new Date().toLocaleString()}): ${text}\r\n`, (err) => {
     });
 };

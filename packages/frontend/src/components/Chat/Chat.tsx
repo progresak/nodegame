@@ -15,6 +15,7 @@ interface ChatProps {
     sendMessageToServer: (message: string) => void;
     sendPrivateMessage: (message: string, username: string) => void;
     addMessage: (args: { player: string; message: string }) => void;
+    addSystemMessage: (args: { message: string }) => void;
     messages: Array<Message>;
 }
 
@@ -23,12 +24,14 @@ const Chat: React.FC<ChatProps> = ({
     sendMessageToServer,
     sendPrivateMessage,
     addMessage,
+    addSystemMessage,
     messages
 }) => {
     const [active, updateActive] = useState(false);
     const [target, updateTarget] = useState(FOR_ALL);
     const [message, updateMessage] = useState('');
     const inputElement = useRef<HTMLInputElement>(null);
+    const wrapperElement = useRef<HTMLDivElement>(null);
 
     const enterCallback = (event: KeyboardEvent) => {
         if (event.code === 'Enter') {
@@ -41,12 +44,22 @@ const Chat: React.FC<ChatProps> = ({
         window.socket.on('addToChat', (data: { player: string; message: string }) => {
             addMessage(data);
         });
+        // @ts-ignore
+        window.socket.on('signInResponse', (data: { player: string; message: string }) => {
+            addSystemMessage({ message: 'Welcome on the server' });
+        });
         document.addEventListener('keydown', enterCallback, false);
 
         return () => {
             document.removeEventListener('keydown', enterCallback, false);
         };
     }, []);
+
+    const scrollToBottom = () => {
+        wrapperElement.current.scrollIntoView({ behavior: 'smooth' });
+    };
+
+    useEffect(scrollToBottom, [messages]);
 
     const handleMessageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const parts = message.split(' ');
@@ -83,20 +96,19 @@ const Chat: React.FC<ChatProps> = ({
     const renderMessages = (mess: Array<Message>) =>
         mess.map(({ message, player, time }: Message) => (
             <MessageLine key={time} className="colored">
-                <MessagePlayerName onClick={() => handleChatToPlayer(player)}>
-                    [{player}]
-                </MessagePlayerName>
-                :&nbsp;{message}
+                {player ? (
+                    <MessagePlayerName onClick={() => handleChatToPlayer(player)}>
+                        [{player}]:&nbsp;
+                    </MessagePlayerName>
+                ) : null}
+                {message}
             </MessageLine>
         ));
 
     return (
         <ChatWrapperElement>
             <MessagesWrapper>
-                <MessagesContent>
-                    <p>Welcome on the server</p>
-                    {renderMessages(messages)}
-                </MessagesContent>
+                <MessagesContent ref={wrapperElement}>{renderMessages(messages)}</MessagesContent>
             </MessagesWrapper>
             <ChatForm hidden={!active} id="chat-form" autoComplete="off" onSubmit={onFormSubmit}>
                 <ChatLabel>{target}</ChatLabel>

@@ -1,3 +1,5 @@
-import { RootState } from '../../reducer';
+import { compose, get, tap, sortBy } from 'lodash/fp';
 
-export const getAllMessages = (state: RootState) => state.app.messages;
+const getParentApp = get('app');
+
+export const getAllMessages = compose(sortBy('time'), tap(console.log), get('messages'), getParentApp);

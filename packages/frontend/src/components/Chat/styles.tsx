@@ -7,7 +7,7 @@ export const MessagesContent = styled.div`
     height: 100%;
     overflow: auto;
     display: flex;
-    flex-direction: column-reverse;
+    flex-direction: column;
     max-height: 200px;
     min-height: 150px;
 `;
@@ -31,6 +31,7 @@ export const MessagesWrapper = styled.div`
     background: rgba(0, 0, 0, 0.4);
     padding: 10px;
     display: flex;
+    flex:1;
     flex-direction: column;
     height: 100%;
 `;
