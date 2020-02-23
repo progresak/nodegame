@@ -2,17 +2,9 @@ const socket = io('http://localhost:8888');
 // const socket = io('https://backend-mmo.herokuapp.com/');
 window.socket = socket;
 
-$(document).ready(() => {
-    const gameDiv = $('#gameDiv');
-    const signDiv = $('#signDiv');
-    const signDivUsername = $('#signDiv-username');
-    const signDivPassword = $('#signDiv-password').hide();
-    const signDivSignUp = $('#signDiv-up').hide();
-
-    signDivUsername.focus();
-
-    const chatForm = $('#chat-form');
-    // scroll to bottom
+window.playGame = () => {
+    const ctx = $('#ctx')[0].getContext('2d');
+    const ctxUi = $('#ctx-ui')[0].getContext('2d');
 
     // /////////////////////////////////////
     // * PREPARED FOR MAGIC CAMERA * //
@@ -22,22 +14,15 @@ $(document).ready(() => {
         changeMap();
     });
 
-    signDivSignUp.click(() => {
-        socket.emit('signUp', {
-            username: signDivUsername.val(),
-            password: signDivPassword.val()
-        });
-    });
+    // signDivSignUp.click(() => {
+    //     socket.emit('signUp', {
+    //         username: signDivUsername.val(),
+    //         password: signDivPassword.val()
+    //     });
+    // });
 
     const area = $('#message-area');
-    socket.on('signInResponse', data => {
-        if (data.success) {
-            signDiv.hide();
-            gameDiv.show();
-        } else {
-            area.html('Neplatné přihlášení');
-        }
-    });
+
     socket.on('signUpResponse', data => {
         if (data.success) {
             area.html('Registrace proběhla úspěšně');
@@ -46,7 +31,14 @@ $(document).ready(() => {
         }
     });
     // Game
-
+    socket.on('signInResponse', data => {
+        if (data.success) {
+            // signDiv.hide();
+            // gameDiv.show();
+        } else {
+            area.html('Neplatné přihlášení');
+        }
+    });
     const Img = {};
     Img.player = new Image();
     Img.player.src = './img/avatar.png';
@@ -59,9 +51,7 @@ $(document).ready(() => {
     Img.map.wow.src = './img/map.jpg';
     Img.map.field = new Image();
     Img.map.field.src = './img/field.jpg';
-
-    const ctx = document.getElementById('ctx').getContext('2d');
-    const ctxUi = document.getElementById('ctx-ui').getContext('2d');
+    // }
     let WIDTH;
     let HEIGHT;
     const setDimension = function(w, h) {
@@ -339,7 +329,7 @@ $(document).ready(() => {
 
     let attackActive = false;
     document.onkeydown = function(event) {
-        if (!chatForm.is(':visible')) {
+        if (!$('#chat-form').is(':visible')) {
             if (event.keyCode === 68) {
                 // d
                 socket.emit('keyPress', {
@@ -365,7 +355,7 @@ $(document).ready(() => {
                 // w
                 socket.emit('keyPress', {
                     inputId: 'up',
-                    state: true,
+                    state: true
                 });
             }
             if (event.keyCode === 32) {
@@ -443,4 +433,4 @@ $(document).ready(() => {
             });
         }
     };
-});
+};

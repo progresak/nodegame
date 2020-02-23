@@ -8,7 +8,6 @@ import Content from './Content';
 
 const GlobalStyle = createGlobalStyle`
     body {
-      background: #333;
       font-family: 'Roboto', sans-serif;
     }
 `;

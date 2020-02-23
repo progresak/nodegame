@@ -14,8 +14,8 @@ export const MessagesContent = styled.div`
 
 export const ChatWrapperElement = styled.div`
     position: absolute;
-    left: 10px;
-    bottom: 10px;
+    left: 16px;
+    bottom: 16px;
     width: 400px;
     > p > b {
         color: yellow;
@@ -31,7 +31,7 @@ export const MessagesWrapper = styled.div`
     background: rgba(0, 0, 0, 0.4);
     padding: 10px;
     display: flex;
-    flex:1;
+    flex: 1;
     flex-direction: column;
     height: 100%;
 `;

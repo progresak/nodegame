@@ -1,4 +1,11 @@
-import { ADD_MESSAGE, ADD_SYSTEM_MESSAGE, SEND_MESSAGE_TO_SERVER, SEND_PRIVATE_MESSAGE, SIGN_IN } from './actionTypes';
+import {
+    ADD_MESSAGE,
+    ADD_SYSTEM_MESSAGE,
+    SEND_MESSAGE_TO_SERVER,
+    SEND_PRIVATE_MESSAGE,
+    SIGN_IN,
+    SIGN_IN_SUCESSFULL
+} from './actionTypes';
 import { createAction, createWSAction } from '../helpers';
 
 export const signIn = ({ username, password }: { username: string; password: string }) => {
@@ -19,4 +26,8 @@ export const addMessage = ({ player, message }: { player: string; message: strin
 
 export const addSystemMessage = ({ message }: { message: string }) => {
     return createAction(ADD_SYSTEM_MESSAGE, { message });
+};
+
+export const signInSuccessfull = () => {
+    return createAction(SIGN_IN_SUCESSFULL);
 };

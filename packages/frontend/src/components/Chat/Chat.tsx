@@ -15,7 +15,6 @@ interface ChatProps {
     sendMessageToServer: (message: string) => void;
     sendPrivateMessage: (message: string, username: string) => void;
     addMessage: (args: { player: string; message: string }) => void;
-    addSystemMessage: (args: { message: string }) => void;
     messages: Array<Message>;
 }
 
@@ -24,7 +23,6 @@ const Chat: React.FC<ChatProps> = ({
     sendMessageToServer,
     sendPrivateMessage,
     addMessage,
-    addSystemMessage,
     messages
 }) => {
     const [active, updateActive] = useState(false);
@@ -44,10 +42,7 @@ const Chat: React.FC<ChatProps> = ({
         window.socket.on('addToChat', (data: { player: string; message: string }) => {
             addMessage(data);
         });
-        // @ts-ignore
-        window.socket.on('signInResponse', (data: { player: string; message: string }) => {
-            addSystemMessage({ message: 'Welcome on the server' });
-        });
+
         document.addEventListener('keydown', enterCallback, false);
 
         return () => {
@@ -56,7 +51,9 @@ const Chat: React.FC<ChatProps> = ({
     }, []);
 
     const scrollToBottom = () => {
-        wrapperElement.current.scrollIntoView({ behavior: 'smooth' });
+        if (wrapperElement && wrapperElement.current) {
+            wrapperElement.current.scrollIntoView({ behavior: 'smooth' });
+        }
     };
 
     useEffect(scrollToBottom, [messages]);

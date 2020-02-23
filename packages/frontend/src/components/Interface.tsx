@@ -14,10 +14,12 @@ const Interface = () => (
 export default Interface;
 
 const InterfaceWrapper = styled.div`
+    z-index: -1;
     position: absolute;
-    top: 8px;
-    left: 8px;
+    // top: 8px;
+    // left: 8px;
 `;
+
 const PositionElement = styled.div`
     position: absolute;
     bottom: 10px;

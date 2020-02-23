@@ -377,7 +377,6 @@ io.sockets.on('connection', (socket) => {
 
     socket.on('signIn', (data) => {
         isValidPassword(data, (res) => {
-            console.log({ data, res });
             if (res) {
                 Player.onConnect(socket, data);
                 socket.emit('signInResponse', {

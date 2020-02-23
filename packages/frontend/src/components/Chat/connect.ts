@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import { getAllMessages } from '../../ducks/App/selectors';
-import { addMessage, addSystemMessage, sendMessageToServer, sendPrivateMessage } from '../../ducks/App/actions';
+import { addMessage, sendMessageToServer, sendPrivateMessage } from '../../ducks/App/actions';
 import { RootState } from '../../reducer';
 import { Message } from '../../ducks/App/reducer';
 
@@ -18,8 +18,8 @@ const mapDispatchToProps = {
     sendMessageToServer,
     sendPrivateMessage,
     addMessage,
-    addSystemMessage
 };
+
 const mapStateToProps = (state: RootState) => ({
     messages: getAllMessages(state)
 });
