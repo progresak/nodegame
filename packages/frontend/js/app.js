@@ -6,39 +6,6 @@ window.playGame = () => {
     const ctx = $('#ctx')[0].getContext('2d');
     const ctxUi = $('#ctx-ui')[0].getContext('2d');
 
-    // /////////////////////////////////////
-    // * PREPARED FOR MAGIC CAMERA * //
-    // /////////////////////////////////////
-
-    $('#changeMap').click(() => {
-        changeMap();
-    });
-
-    // signDivSignUp.click(() => {
-    //     socket.emit('signUp', {
-    //         username: signDivUsername.val(),
-    //         password: signDivPassword.val()
-    //     });
-    // });
-
-    const area = $('#message-area');
-
-    socket.on('signUpResponse', data => {
-        if (data.success) {
-            area.html('Registrace proběhla úspěšně');
-        } else {
-            area.html('Jméno již existuje');
-        }
-    });
-    // Game
-    socket.on('signInResponse', data => {
-        if (data.success) {
-            // signDiv.hide();
-            // gameDiv.show();
-        } else {
-            area.html('Neplatné přihlášení');
-        }
-    });
     const Img = {};
     Img.player = new Image();
     Img.player.src = './img/avatar.png';
@@ -51,34 +18,15 @@ window.playGame = () => {
     Img.map.wow.src = './img/map.jpg';
     Img.map.field = new Image();
     Img.map.field.src = './img/field.jpg';
-    // }
+
     let WIDTH;
     let HEIGHT;
-    const setDimension = function(w, h) {
-        w -= 20;
-        h -= 20;
-        WIDTH = w;
-        HEIGHT = h;
-        ctx.canvas.width = w;
-        ctx.canvas.height = h;
-        ctxUi.canvas.width = w;
-        ctxUi.canvas.height = h;
-        $('#ui').width(w);
-        $('#ui').height(h);
+    window.setDimension = ({ width, height }) => {
+        width -= 20;
+        height -= 20;
+        WIDTH = width;
+        HEIGHT = height;
     };
-    const w = $(window).width();
-    const h = $(window).height();
-    setDimension(w, h);
-
-    $(window).resize(function() {
-        const w = $(this).width();
-        const h = $(this).height();
-        setDimension(w, h);
-        socket.emit('setCanvas', {
-            width: w,
-            height: h
-        });
-    });
 
     var Player = function(initPack) {
         const self = {};
@@ -249,23 +197,6 @@ window.playGame = () => {
     });
     var bgImage = new Image();
     bgImage.src = './img/escheresque_ste.png';
-    //  var lastRepaintTime=window.performance.now();
-    //  function bg(canvas){
-    //      var player = Player.list[selfId];
-    //      var x = WIDTH/2 - player.x
-    //      var y = HEIGHT/2 - player.y
-    //
-    //      var time = 100;
-    //      var velocity = 100;
-    //       var framegap = time - lastRepaintTime;
-    //       lastRepaintTime = time;
-    //       var translateX = velocity * (framegap / 1000);
-    //       ctx.clearRect(0, 0, canvas.width, canvas.height);
-    //       var pattern = ctx.createPattern(bgImage, "repeat");
-    //       ctx.fillStyle = pattern;
-    //       ctx.rect(x, y, WIDTH, HEIGHT);
-    //       ctx.fill();
-    //     }
 
     const render = function() {
         if (!selfId) {
@@ -285,23 +216,23 @@ window.playGame = () => {
             Bullet.list[i].draw();
         }
     };
-    //
-    // window.requestAnimFrame = (function(){
-    //   return  window.requestAnimationFrame       ||
-    //           window.webkitRequestAnimationFrame ||
-    //           window.mozRequestAnimationFrame    ||
-    //           function( callback ){
-    //             window.setTimeout(callback, 1000 / 10);
-    //           };
-    // })();
-    // (function animloop(){
-    //     // place the rAF *before* the render() to assure as close to
-    //     // 60fps with the setTimeout fallback.
-    //   requestAnimFrame(animloop);
-    //   render();
-    // })();
 
-    setInterval(render, 1000 / 25);
+    window.requestAnimFrame = (function() {
+        return (
+            window.requestAnimationFrame ||
+            window.webkitRequestAnimationFrame ||
+            window.mozRequestAnimationFrame ||
+            function(callback) {
+                window.setTimeout(callback, 1000 / 25);
+            }
+        );
+    })();
+    (function animloop() {
+        // place the rAF *before* the render() to assure as close to
+        // 60fps with the setTimeout fallback.
+        requestAnimFrame(animloop);
+        render();
+    })();
 
     var bgImage = new Image();
     bgImage.src = './img/escheresque_ste.png';
@@ -310,10 +241,6 @@ window.playGame = () => {
         const x = WIDTH / 2 - player.x;
         const y = HEIGHT / 2 - player.y;
         ctx.drawImage(Img.map[player.map], x, y);
-    };
-
-    var changeMap = function() {
-        socket.emit('changeMap');
     };
 
     const lastScore = null;

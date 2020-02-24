@@ -1,23 +1,42 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import Chat from './Chat';
 import styled from 'styled-components';
+import ChangeMapButton from './ChangeMapButton';
+import { connect } from 'react-redux';
+import { RootState } from '../reducer';
+import { getWindowSize } from '../ducks/App/selectors';
 
-const Interface = () => (
-    <InterfaceWrapper id="ui">
-        <Chat />
-        <PositionElement id="position">
-            <span>[100,100]</span>
-        </PositionElement>
-    </InterfaceWrapper>
-);
 
-export default Interface;
+interface InterfaceProps {
+    size: {
+        width: number;
+        height: number;
+    }
+}
+const Interface: React.FC<InterfaceProps> = ({ size }) => {
+    const wrapper = useRef<HTMLDivElement>(null);
+    const { width, height } = size;
+    useEffect(() => {
+        if (wrapper.current) {
+            wrapper.current.style.width = `${width}px`;
+            wrapper.current.style.height = `${height}px`;
+        }
+    }, [size]);
+
+    return (
+        <InterfaceWrapper ref={wrapper} id="ui">
+            <Chat />
+            <PositionElement id="position">
+                <span>[100,100]</span>
+            </PositionElement>
+            <ChangeMapButton />
+        </InterfaceWrapper>
+    );
+};
 
 const InterfaceWrapper = styled.div`
     z-index: -1;
     position: absolute;
-    // top: 8px;
-    // left: 8px;
 `;
 
 const PositionElement = styled.div`
@@ -31,3 +50,13 @@ const PositionElement = styled.div`
         color: white;
     }
 `;
+
+interface StateProps {
+    size: { width: number; height: number };
+}
+
+const mapStateToProps = (state: RootState) => ({
+    size: getWindowSize(state)
+});
+
+export default connect<StateProps, {}, {}, RootState>(mapStateToProps)(Interface);
