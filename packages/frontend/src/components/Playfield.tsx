@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import useWindowSize from '../helpers/useWindowSize';
+import useWindowSize from '../hooks/useWindowSize';
 import { connect } from 'react-redux';
 import { RootState } from '../reducer';
 import { setWindowSize } from '../ducks/App/actions';
