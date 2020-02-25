@@ -1,13 +1,15 @@
 {
   "name": "@nodegame/shared",
   "version": "1.0.0",
-  "main": "src/index.ts",
+  "main": "dist/index.js",
   "license": "MIT",
   "private": true,
   "repository": {
     "type": "git",
     "url": "https://github.com/progresak/nodegame"
   },
-  "scripts": {},
+  "scripts": {
+    "build": "tsc"
+  },
   "dependencies": {}
 }

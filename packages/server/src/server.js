@@ -4,6 +4,7 @@ const app = express();
 const server = require('http').Server(app);
 
 const fs = require('fs');
+const WebSocketActionTypes = require('@nodegame/shared');
 
 app.get('/*', (req, res) => res.send('Server without render'));
 
