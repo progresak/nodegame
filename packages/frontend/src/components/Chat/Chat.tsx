@@ -1,3 +1,4 @@
+import { WebSocketActionTypes } from '@nodegame/shared';
 import React, { useEffect, useRef, useState } from 'react';
 import {
     ChatForm,
@@ -39,7 +40,7 @@ const Chat: React.FC<ChatProps> = ({
 
     useEffect(() => {
         // @ts-ignore
-        window.socket.on('addToChat', (data: { player: string; message: string }) => {
+        window.socket.on(WebSocketActionTypes.AddToChat, (data: { player: string; message: string }) => {
             addMessage(data);
         });
 

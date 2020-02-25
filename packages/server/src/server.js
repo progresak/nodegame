@@ -140,7 +140,7 @@ Player.list = {};
 Player.onConnect = function (socket, data) {
     const map = 'wow';
     for (const i in SOCKET_LIST) {
-        SOCKET_LIST[i].emit('addToChat', {
+        SOCKET_LIST[i].emit('AddToChat', {
             player: 'Server',
             message: `Hráč: [${data.username}] se připojil do hry`,
         });
@@ -176,7 +176,7 @@ Player.onConnect = function (socket, data) {
             player.mouseAngle = data.state;
         }
     });
-    socket.on('changeMap', (data) => {
+    socket.on('ChangeMap', (data) => {
         if (player.map === 'wow') {
             player.map = 'field';
         } else {
@@ -190,18 +190,18 @@ Player.onConnect = function (socket, data) {
         bullet: Bullet.getAllInitPack(),
     });
 
-    socket.on('sendMsgToServer', (data) => {
+    socket.on('SendMsgToServer', (data) => {
         const p = Player.list[socket.id];
         logText(`${player.username}: ${data}`);
         for (const i in SOCKET_LIST) {
-            SOCKET_LIST[i].emit('addToChat', {
+            SOCKET_LIST[i].emit('AddToChat', {
                 player: player.username,
                 message: data,
             });
         }
     });
 
-    socket.on('sendPmToServer', (data) => {
+    socket.on('SendPmToServer', (data) => {
         let recipientSocket = null;
         for (const i in Player.list) {
             if (Player.list[i].username === data.username) {
@@ -211,17 +211,17 @@ Player.onConnect = function (socket, data) {
         logText(`Od ${player.username} to ${data.username}: ${data.message}`);
 
         if (recipientSocket === null) {
-            socket.emit('addToChat', {
+            socket.emit('AddToChat', {
                 player: 'Server',
                 message: `Hráč: ${data.username} není online`,
             });
         } else {
-            recipientSocket.emit('addToChat', {
+            recipientSocket.emit('AddToChat', {
                 player: player.username,
                 message: data.message,
                 before: 'Od',
             });
-            socket.emit('addToChat', {
+            socket.emit('AddToChat', {
                 player: data.username,
                 message: data.message,
                 before: 'To',
@@ -241,7 +241,7 @@ Player.getAllInitPack = function () {
 Player.onDisconnect = function (socket) {
     if (Player.list[socket.id] !== undefined) {
         for (const i in SOCKET_LIST) {
-            SOCKET_LIST[i].emit('addToChat', {
+            SOCKET_LIST[i].emit('AddToChat', {
                 player: 'Server',
                 message: `Hráč: [${Player.list[socket.id].username}] se odpojil ze hry`,
             });
@@ -375,7 +375,7 @@ io.sockets.on('connection', (socket) => {
     socket.id = Math.random();
     SOCKET_LIST[socket.id] = socket;
 
-    socket.on('signIn', (data) => {
+    socket.on('SignIn', (data) => {
         isValidPassword(data, (res) => {
             if (res) {
                 Player.onConnect(socket, data);
@@ -410,7 +410,7 @@ io.sockets.on('connection', (socket) => {
         delete SOCKET_LIST[socket.id];
         Player.onDisconnect(socket);
     });
-    socket.on('setCanvas', (data) => {
+    socket.on('SetCanvas', (data) => {
         canvasWidth = data.width;
         canvasHeight = data.height;
     });

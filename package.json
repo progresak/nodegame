@@ -14,5 +14,13 @@
   "engines": {
     "node": "12.x.x",
     "yarn": "1.x.x"
+  },
+  "scripts": {
+    "client": "yarn workspace @nodegame/frontend dev",
+    "server": "yarn workspace @nodegame/server start",
+    "start": "concurrently --kill-others-on-fail \"yarn server\"  \"yarn client\""
+  },
+  "dependencies": {
+    "concurrently": "^5.1.0"
   }
 }
