@@ -31,7 +31,7 @@
     "eslint-plugin-react-hooks": "^2.3.0",
     "esm": "^3.2.25",
     "express": "^4.17.1",
-    "socket.io": "^2.3.0",
+    "socket.io": "^2.4.0",
     "ts-node-dev": "^1.0.0-pre.44",
     "typescript": "^3.7.5",
     "@babel/core": "^7.8.3",
